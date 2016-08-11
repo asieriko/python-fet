@@ -1,3 +1,13 @@
+#project
+ordutegia/zaharrak
+ordutegia/timetables
+ordutegia/data
+EDUCA/*.html
+EDUCA/*.xml
+EDUCA/*.xhtml
+EDUCA/datuak.py
+EDUCA/datuak1415.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

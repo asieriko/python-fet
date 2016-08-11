@@ -1,0 +1,9 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Browse Teacher
+Comment=Browse Fet generated teachers timetables
+Exec=python3 /home/asier/Hezkuntza/fet/BrowseTeacher/MainWindow.py > a.txt
+Terminal=false 
+StartupNotify=true
