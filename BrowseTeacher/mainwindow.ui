@@ -90,6 +90,27 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="zaintzakButton">
+            <property name="text">
+             <string>Zaintzak</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+          <widget class="QPushButton" name="libreButton">
+            <property name="text">
+             <string>Libre</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="denakButton">
+            <property name="text">
+             <string>Denak</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">

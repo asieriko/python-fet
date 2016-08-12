@@ -1,18 +1,22 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from PyQt5 import uic, QtWidgets, QtCore, QtGui
 import xml.etree.ElementTree as ET
+from lxml import etree
 import sys, os
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
-        self.ui = uic.loadUi('mainwindow.ui', self)
+        self.ui = uic.loadUi("/".join(os.path.realpath(__file__).split('/')[:-1])+'/'+'mainwindow.ui', self)
+        self.ui.zaintzakButton.clicked.connect(self.getZaintzaTeachers)
+        self.ui.denakButton.clicked.connect(self.getTeachers)
+        self.ui.libreButton.clicked.connect(self.getFreeTeachers)
         self.ui.ateraButton.clicked.connect(self.close)
         self.ui.openB.clicked.connect(self.openxml)
         self.teacherCB.activated[str].connect(self.fillTimetable)
         self.ui.listWidget.currentItemChanged.connect(self.fillTimetable2)
         self.ui.tableWidget.setHorizontalHeaderLabels(["Astelehena","Asteartea","Asteazkena","Osteguna","Ostirala"]);
-        self.ui.tableWidget.setVerticalHeaderLabels(["8.30\n-\n9.25","9.25\n-\n10.20","10.20\n-\n11.15","11.15\n-\n11.45","11.45\n-\n12.40","12.40\n-\n13.35","13.35\n-\n14.40","14.30\n-\n15.22"]);
+        self.ui.tableWidget.setVerticalHeaderLabels(["08:30\n-\n9:25","09:25\n-\n10:20","10:20\n-\n11:15","11:15\n-\n11:45","11:45\n-\n12:40","12:40\n-\n13:35","13:35\n-\n14:30","14:30\n-\n15:20"]);
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(1)
         self.ui.tableWidget.verticalHeader().setSectionResizeMode(1)
         self.ui.tableWidget_2.setVerticalHeaderLabels(["Extremos mañana","Extremos mediodia","Huecos","Entrar 1, Salir 6","Entrar 1, Salir 7","Dias completos"]);
@@ -26,7 +30,6 @@ class Ui(QtWidgets.QMainWindow):
         self.colors = [QtGui.QColor("red"),QtGui.QColor("green"),QtGui.QColor("blue"),QtGui.QColor("magenta"), QtGui.QColor("yellow"),
         QtGui.QColor("cyan"),QtGui.QColor("gray"),QtGui.QColor("darkRed"),QtGui.QColor("darkGreen"),
         QtGui.QColor("darkBlue"),QtGui.QColor("darkMagenta"),QtGui.QColor("darkYellow"),QtGui.QColor("darkCyan"),QtGui.QColor("darkGray"),QtGui.QColor("lightGray")]
-        print(os.path.realpath(__file__))
 
     @QtCore.pyqtSlot()
     def openxml(self):
@@ -40,12 +43,51 @@ class Ui(QtWidgets.QMainWindow):
         self.fillTimetable(self.ui.listWidget.currentItem().text())
 
 
+    def getFreeTeachers(self):
+        et = etree.parse(self.inputxmlf)
+        sel = self.ui.tableWidget.selectedRanges()
+        hour = self.ui.tableWidget.verticalHeaderItem(sel[0].topRow()).text().replace('\n','')
+        day = self.ui.tableWidget.horizontalHeaderItem(sel[0].leftColumn()).text()
+        allteachers = [at.attrib.get('name') for at in et.xpath(".//Teacher")]
+        bussyteachers = [at.getparent().getparent().getparent().attrib.get('name') for at in et.xpath(".//Teacher/Day[@name='"+day+"']/Hour[@name='"+hour+"']/Subject")]
+        freeteachers = sorted(list(set(allteachers)-set(bussyteachers)))
+        current = self.ui.teacherCB.currentText()
+        self.tlist = []
+        if current not in freeteachers:
+            self.tlist.append(current)
+        for t in freeteachers:
+            self.tlist.append(t) #if the selected teacher has Zaintza it gets duplicated
+        self.ui.teacherCB.clear()
+        self.ui.teacherCB.addItems(self.tlist)
+        self.ui.listWidget.clear()
+        self.ui.listWidget.addItems(self.tlist)
+
+
+    def getZaintzaTeachers(self):
+        et = etree.parse(self.inputxmlf)
+        #print(et.xpath(".//Teacher[Day[@name='Astelehena']/Hour[@name='08:30-9:25']/Subject[@name='Zaintza']]"))
+        #print(et.xpath(".//Teacher/Day[@name='Astelehena']/Hour[@name='08:30-9:25']/not(Subject)"))
+        sel = self.ui.tableWidget.selectedRanges()
+        hour = self.ui.tableWidget.verticalHeaderItem(sel[0].topRow()).text().replace('\n','')
+        day = self.ui.tableWidget.horizontalHeaderItem(sel[0].leftColumn()).text()
+        teachers = et.xpath(".//Teacher/Day[@name='"+day+"']/Hour[@name='"+hour+"']/Subject[@name='Zaintza']")
+        self.tlist = [self.ui.teacherCB.currentText()]
+        for t in teachers:
+            self.tlist.append(t.getparent().getparent().getparent().attrib.get('name')) #if the selected teacher has Zaintza it gets duplicated
+        self.ui.teacherCB.clear()
+        self.ui.teacherCB.addItems(self.tlist)
+        self.ui.listWidget.clear()
+        self.ui.listWidget.addItems(self.tlist)
+
+
     def getTeachers(self):
       self.tree = ET.parse(self.inputxmlf)
       self.root = self.tree.getroot()
       teachers = self.root.findall(".//Teacher")
       self.tlist = list(teacher.attrib.get('name') for teacher in teachers)
+      self.ui.teacherCB.clear()
       self.ui.teacherCB.addItems(self.tlist)
+      self.ui.listWidget.clear()
       self.ui.listWidget.addItems(self.tlist)
       self.fillTimetable(self.root.findall(".//Teacher")[0].attrib.get('name')) #fixme: get from the list
 
