@@ -2,10 +2,11 @@
 import xml.etree.ElementTree as ET
 import sys, getopt
 import csv
+import random
 from collections import defaultdict
 
 
-def evaluate(inputfile,outputfile):
+def extractinfo(inputfile,forbiden):
   tree = ET.parse(inputfile)
   root = tree.getroot()
   teachers = root.findall(".//Teacher")
@@ -15,10 +16,12 @@ def evaluate(inputfile,outputfile):
   for teacher in teachers:
     groups=[]
     name=teacher.attrib.get('name')
-    print(name)
+    #print(name)
     students = teacher.findall(".//Students")
     for group in students:
-        print(group.attrib.get('name')[:3])
+        #print(group.attrib.get('name')[:3])
+        if group.attrib.get('name')[0] in forbiden:
+            break
         if group.attrib.get('name')[:3] not in groups:
             groups.append(group.attrib.get('name')[:3])
         if group.attrib.get('name')[:3] not in allgroups:
@@ -26,39 +29,107 @@ def evaluate(inputfile,outputfile):
         if name not in gdic[group.attrib.get('name')[:3]]:
             gdic[group.attrib.get('name')[:3]].append(name)
     tdic[name] = groups
-  print(tdic)
-  print(allgroups)
-  print(gdic)
+  #print(tdic)
+  #print(allgroups)
+  #print(gdic)
+  return allgroups,gdic,tdic
         
+
+def mix(allgroups,simultaneous=4):
+    groups = []
+    for gr in allgroups:
+        if gr[0] != '6' and gr[0] != 'b':
+            groups.append(gr)
+    random.shuffle(groups)
+    l = len(allgroups)
+    m = l%simultaneous
+    d = l//simultaneous
+    #print("L =",len(groups))
+    result = []
+    i = 0
+    j = i + simultaneous
+    for p in range(d-1):
+        if p == d - 1:
+            j = len(a)
+        result.append(groups[i:j])
+        i = j
+        j = i + simultaneous
+    #print(result,conf)
+    return result
+
+
+def mix2(allgroups,sessions=16):
+    groups = []
+    for gr in allgroups:
+        if gr[0] != '6' and gr[0] != 'b':
+            groups.append(gr)
+    random.shuffle(groups)
+    l = len(allgroups)
+    m = l%sessions
+    d = l//sessions
+    
+    small = big = sessions
+    
+    if m != 0 and m < sessions:
+        small = sessions - m
+        big = m
+    
+    #print("L =",len(groups))
+    result = []
+    numbergroups = d
+    i = 0
+    j = i + numbergroups
+    for p in range(sessions):
+        if p > small-2:
+            numbergroups = d + 1
+        if p == sessions - 1:
+            j = len(a)
+        result.append(groups[i:j])
+        i = j
+        j = i + numbergroups
+    #print(result,conf)
+    return result
+
+
+for n in range(1,19):
+   print("----------",n,"-----------")
+   for i in mix2(a,n):
+     print(len(i)) 
+
+def evaluatePartition(partition,gdic):
+    conf = 0
+    for group in partition:
+        conf += evaluate(group,gdic)
+    return conf
+
+def evaluate(groups,gdic):
+    '''
+    input a set of groups and the list with each group's teachers
+    ouput how many teachers repeat group
+    '''
+    t=[]
+    conf = 0
+    for g in groups:
+        for teacher in gdic[g]:
+            if teacher in t:
+                conf += 1
+            else:
+                t.append(teacher)
+    return conf
+    
         
 
-        
-evaluate("teachers.xml","")
-
-    tdic[name.encode('utf-8')]=(name.encode('utf-8'),totalpre,totalpost,totalgaps,total1and6,total1and7,total1and6+total1and7)
-    if total1and6+total1and7 in sumdic.keys():
-      sumdic[total1and6+total1and7] += 1
-    else:
-      sumdic[total1and6+total1and7] = 1
-
-  
-  with open(outputfile, 'wb') as f:
-
-    writer = csv.writer(f)
-    header=('irakaslea','goizeko hutsuenak','eguerdiko hutsuneak','erdiko hutsuneak','1 eta 6','1 eta 7','1 eta azkena')
-    writer.writerow(header)
-    writer.writerows(tdic[key] for key in tdic.keys())
-    header=sumdic.keys()
-    print "Resumen archivo: " + inputfile + "  (Escrito en "+ outputfile+")"
-    print sumdic
-    writer.writerow(('Resumen: Numero de personas con x dias completos',''))
-    writer.writerow(header)
-    writer.writerow(list(sumdic[key] for key in sumdic.keys()))
-
-  #print "irakaslea,goizeko hutsuenak,eguerdiko hutsuneak,1 eta 6,1 eta 7."
-  #for key in tdic.keys():
-    #(goiz,eguerdi,firstand6last,firstandlast)=tdic[key]
-    #print key,',',goiz,',',eguerdi,',',firstand6last,',',firstandlast
+def calculate(tfile="teachers.xml",forbiden=[],n=5000):
+    a,g,t = extractinfo(tfile,forbiden)
+    c = 999999999999
+    r = []
+    for i in range(n):
+        partition = mix(a)
+        c1 = evaluatePartition(partition,g)
+        if c1 < c:
+            r = partition
+            c = c1
+    print(r,c)
 
 
 
@@ -78,7 +149,7 @@ def main(argv):
          inputfile = arg
       elif opt in ("-o", "--ofile"):
          outputfile = arg
-   evaluate(inputfile,outputfile)
+   calculate(inputfile,['M','b','6'])
 
 if __name__ == "__main__":
    main(sys.argv[1:])
