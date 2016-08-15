@@ -17,7 +17,7 @@ class Ui(QtWidgets.QMainWindow):
 
     @QtCore.pyqtSlot()
     def openxml(self):
-        fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '/home/asier')
+        fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '/home/asier',"teachers.xml files (*teachers.xml)")
         self.inputxmlf = fname[0]
         self.ui.inputxml.setText(self.inputxmlf)
         d =fname[0].rfind("/")

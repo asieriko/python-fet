@@ -3,6 +3,8 @@ from PyQt5 import uic, QtWidgets, QtCore, QtGui
 import xml.etree.ElementTree as ET
 from lxml import etree
 import sys, os
+#import ../TimetableEval/teachereval
+
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
@@ -26,6 +28,7 @@ class Ui(QtWidgets.QMainWindow):
         self.ui.zaintzakRB.toggled.connect(self.tog)
         self.ui.deusRB.toggled.connect(self.tog)
         self.inputxmlf = ""
+        #self.center()
         self.show()
         self.colors = [QtGui.QColor("red"),QtGui.QColor("green"),QtGui.QColor("blue"),QtGui.QColor("magenta"), QtGui.QColor("yellow"),
         QtGui.QColor("cyan"),QtGui.QColor("gray"),QtGui.QColor("darkRed"),QtGui.QColor("darkGreen"),
@@ -37,6 +40,7 @@ class Ui(QtWidgets.QMainWindow):
         self.inputxmlf = fname[0]
         self.setWindowTitle = "Ordutegia - " + self.inputxmlf
         self.getTeachers()
+        self.evaluateAll()
 
     @QtCore.pyqtSlot()
     def tog(self):
@@ -145,6 +149,77 @@ class Ui(QtWidgets.QMainWindow):
         self.ui.tableWidget.verticalHeader().setSectionResizeMode(1)
         self.evaluate(text)
 
+
+
+    def evaluateAll(self):
+        #FIXME: This function is a duplicate of the one in ../TimetableEval/teachereval.py
+        teachers = self.root.findall(".//Teacher")
+        tdic={}
+        sumdic={}
+        for teacher in teachers:
+            totalpre=0
+            totalpost=0
+            total1and6=0
+            total1and7=0
+            totalgaps=0
+            name=teacher.attrib.get('name')
+            days = teacher.findall(".//Day")
+            for day in days:
+                hours=day.findall(".//Hour")
+                prefirst=-1#1. hutsunea?
+                activities=0
+                lastactivity=6
+                first=False
+                last6=False
+                last7=False
+                atsedenaldi=0
+                gaps=0
+                for i in range(len(hours)):
+                    subject=hours[i].findall(".//Subject")
+                    if subject == [] and i-1 == prefirst: prefirst=i
+                    if subject == [] and i==3 and prefirst == 2: atsedenaldi = -1
+                    if subject == [] and i-1 != prefirst: gaps += 1
+                    if subject != []: activities += 1
+                    if subject != []: lastactivity = i
+                    if subject != [] and i==0: first=True
+                    if subject != [] and i==6: last6=True
+                    if subject != [] and i==7:
+                        last7=True
+                        last6=False
+                if prefirst<6:
+                    totalpre += prefirst+1+atsedenaldi #+1 hasten delako 0n, eta <6, bestela esan nahi duelako egun osoa 7 orduak libre dituela, bestela atsedenaldia hutsune bezala hartzen du
+                    if lastactivity>3 and prefirst<3:
+                        totalgaps += lastactivity - activities - prefirst - 1
+                    else:
+                        totalgaps += lastactivity - activities - prefirst
+                #if prefirst<6: totalgaps = gaps - (6-lastactivity)
+                if lastactivity<6: totalpost += 6-lastactivity
+                if lastactivity<=3:totalpost -= 1 #atsedenaldia hutsune bezlaa ez hartzeko
+                if first and last6: total1and6 += 1
+                if first and last7: total1and7 += 1
+            tdic[name.encode('utf-8')]=(name.encode('utf-8'),totalpre,totalpost,totalgaps,total1and6,total1and7,total1and6+total1and7)
+            if total1and6+total1and7 in sumdic.keys():
+                sumdic[total1and6+total1and7] += 1
+            else:
+                sumdic[total1and6+total1and7] = 1
+
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+
+        msg.setText("Global Timetable Results")
+        header=sumdic.keys()
+        text = ""
+        for key in sumdic.keys():
+            text += "\n"+ str(key) + ":\t " + str(sumdic[key]) 
+        print(text)
+        
+        msg.setInformativeText(text)
+        msg.setWindowTitle("Timbetable results")
+        
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+        msg.exec_()
+        
+        return tdic, sumdic
 
     def evaluate(self,teachername):
         teacher = self.root.findall(".//Teacher[@name='"+teachername+"']")[0]
