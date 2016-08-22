@@ -7,6 +7,8 @@ EDUCA/*.xml
 EDUCA/*.xhtml
 EDUCA/datuak.py
 EDUCA/datuak1415.py
+webapp/wavenv
+webapp/files/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -18,9 +18,9 @@ def generate_all():
   grdic = load_groups_rooms_file()
   adic = extract_asigf_from_groups(grdic)
   wsdic,zdic = create_without_students_dict()
-  adic = dict(wsdic.items() + adic.items())
+  adic.update(wsdic)
   gdic = extract_taldeak_from_groups(grdic)
-  agrdic = dict(grdic.items() + zdic.items())
+  agrdic = {**grdic, **zdic}
   soluct = create_soluct_xml(agrdic)
   asigt = create_asigt_xml(adic)
   proft = create_proft_xml()
@@ -47,13 +47,13 @@ def load_irakasle_file(CSVfile="irakasle.csv",interactive=False):
     for r in reader:
       irakasle={}
       if interactive:
-        iz=raw_input("Izena: ["+r[2]+"]:")
-        if iz != "": irakasle['NOMBRE']=iz.decode('utf-8')
+        iz=input("Izena: ["+r[2]+"]:")
+        if iz != "": irakasle['NOMBRE']=iz
       else:
         irakasle['NOMBRE']=r[2]
       irakasle['ABREV']=r[0]
       irakasle['DEPART']=r[3]
-      irakasleak[r[1].decode('utf-8')]=irakasle
+      irakasleak[r[1]]=irakasle
   return irakasleak
 
 def load_gelak_file(CSVfile="gelak.csv",interactive=False):
@@ -66,7 +66,7 @@ def load_gelak_file(CSVfile="gelak.csv",interactive=False):
       gela['EDIFICIO']=r[2]
       gela['ABREV']=r[1]
       gela['NOMBRE']=r[0]
-      gelak[r[0].decode('utf-8')]=gela
+      gelak[r[0]]=gela
   return gelak
 
 def load_groups_rooms_file(xmlfile='subgroups.xml'):
@@ -80,20 +80,20 @@ def load_groups_rooms_file(xmlfile='subgroups.xml'):
     for eg in sb.findall('.//Day'):
       eguna=egunak[eg.get('name')]
       for ordu in eg.findall('.//Hour'):
-	ordua=orduak[ordu.get('name')]
-	for teacher in ordu.findall('.//Teacher'):
-	  sub = ordu.find('.//Subject').get('name')
-	  room=ordu.find('.//Room')
-	  if room!=None:
-	    room =room.get('name')
-	  else:
-	    room=""
-	  key=teacher.get('name')+str(eguna)+str(ordua)+sbg#+sbg gabe, group=[1A,1B]
-	  if not key in tgdic.keys():
-	    di={'Teacher':teacher.get('name'),'Subject':sub,'Day':eguna,'Hour':ordua,'Room':room,'Group':[sbg]}
-	    tgdic[key]=di
-	  else:
-	    if not sbg in  tgdic[key]['Group']: tgdic[key]['Group'].append(sbg)
+        ordua=orduak[ordu.get('name')]
+        for teacher in ordu.findall('.//Teacher'):
+          sub = ordu.find('.//Subject').get('name')
+          room=ordu.find('.//Room')
+          if room!=None:
+            room =room.get('name')
+          else:
+            room=""
+          key=teacher.get('name')+str(eguna)+str(ordua)+sbg#+sbg gabe, group=[1A,1B]
+          if not key in tgdic.keys():
+            di={'Teacher':teacher.get('name'),'Subject':sub,'Day':eguna,'Hour':ordua,'Room':room,'Group':[sbg]}
+            tgdic[key]=di
+          else:
+            if not sbg in  tgdic[key]['Group']: tgdic[key]['Group'].append(sbg)
   return tgdic
 
 #a=load_groups_rooms_file()
@@ -118,11 +118,11 @@ def get_asigf_abrev(adic):
   subjects={}
   for k in adic.keys(): 
     if not adic[k]['Subject'] in subjects.keys():
-      iz=raw_input("Ikagaia: ["+adic[k]['Subject'].encode('utf-8')+"]:")
+      iz=input("Ikagaia: ["+adic[k]['Subject']+"]:")
       if iz != "": 
-	subjects[adic[k]['Subject']]={'ABREV':iz.decode('utf-8')}
+        subjects[adic[k]['Subject']]={'ABREV':iz}
       else:
-	subjects[adic[k]['Subject']]={'ABREV':adic[k]['Subject']}
+        subjects[adic[k]['Subject']]={'ABREV':adic[k]['Subject']}
   return subjects
 
 
@@ -143,7 +143,7 @@ def extract_taldeak_from_groups(grdic):
   
 #a=load_groups_rooms_file()
 #for b in a.keys():
-  #if a[b]['Teacher']=='Alfontso Muruzabal':print a[b]
+  #if a[b]['Teacher']=='Alfontso Muruzabal':print(a[b])
 
             
 #Create XML for educa
@@ -164,7 +164,7 @@ def create_educa_xml():
   return tree
   
 def write_educa_xml(tree,educafile="educa.xml"):
-  print tree
+  print(tree)
   tree.write(educafile,
            xml_declaration=True,encoding='utf-8',
            method="xml")  
@@ -177,8 +177,8 @@ def create_proft_xml(irakasleak=teachers):
   for irakasle in irakasleak.keys():
     ID+=1
     ET.SubElement(proft, 'PROFF',
-			      {'ABREV':irakasleak[irakasle]['ABREV'].decode('utf-8'),
-				'DEPART':irakasleak[irakasle]['DEPART'].decode('utf-8'),
+			      {'ABREV':irakasleak[irakasle]['ABREV'],
+				'DEPART':irakasleak[irakasle]['DEPART'],
 				'ID':str(ID),
 				'NOMBRE':irakasle,#irakasleak[irakasle]['NOMBRE'],			
 				}) 
@@ -191,11 +191,11 @@ def create_aulat_xml(gelak=buildings):
   for gela in gelak.keys():
     ID+=1
     ET.SubElement(aulat, 'AULAF',
-			      {'ABREV':gelak[gela]['ABREV'].decode('utf-8'),
-				'EDIFICIO':gelak[gela]['EDIFICIO'].decode('utf-8'),
-				'ID':str(ID).decode('utf-8'),
+			      {'ABREV':gelak[gela]['ABREV'],
+				'EDIFICIO':gelak[gela]['EDIFICIO'],
+				'ID':str(ID),
 				'MAXALUM':'0',
-				'NOMBRE':gelak[gela]['NOMBRE'].decode('utf-8'),			
+				'NOMBRE':gelak[gela]['NOMBRE'],			
 				})   
   indent(aulat)			      
   return aulat
@@ -212,13 +212,13 @@ def create_grupt_xml(taldeak):
       nivel = 'BACH'
     else: 
       nivel = ''
-    if taldeak[key]['GRUPO'][-1] in  in ['P','Q']:
+    if taldeak[key]['GRUPO'][-1] in ['P','Q']:
       nivel = 'DIV'  
     if key[0] != 'b': ET.SubElement(grupt, 'GRUPF',
-			      {'ABREV':taldeak[key]['ABREV'].decode('utf-8'),
-				'CURSO':taldeak[key]['CURSO'].decode('utf-8'),
+			      {'ABREV':taldeak[key]['ABREV'],
+				'CURSO':taldeak[key]['CURSO'],
 				'DESCRIP':'',
-				'GRUPO':taldeak[key]['GRUPO'][-1].decode('utf-8'),
+				'GRUPO':taldeak[key]['GRUPO'][-1],
 				'ID':str(ID),
 				'MAXALUM':'0',
 				'NIVEL':nivel,
@@ -236,7 +236,7 @@ def create_asigt_xml(idic):
   for key in idic.keys():
     ID+=1
     if idic[key]['Room'] not in buildings.keys(): 
-      print idic[key]['Room']
+      print(idic[key]['Room'])
       #buildings[idic[key]['Room']]='1'
     if idic[key]['Group'][0]=='b':
       grup = ""
@@ -248,8 +248,12 @@ def create_asigt_xml(idic):
     else:
       aula = buildings[idic[key]['Room']]['ABREV']
       edificio = buildings[idic[key]['Room']]['EDIFICIO']
+    if idic[key]['Subject'] not in teachers.keys():
+        print(ikasgaiak[idic[key]['Subject']])
+        ikasgaiak[idic[key]['Subject']]['ABREV'] = input("ABREV: ")
+        ikasgaiak[idic[key]['Subject']]['NOMBRE'] = input("NOMBRE: ")
     ET.SubElement(asigt, 'ASIGF',
-			      {'ASIG':ikasgaiak[idic[key]['Subject']]['ABREV'].decode('utf-8'),
+			      {'ASIG':ikasgaiak[idic[key]['Subject']]['ABREV'],
 				'AULA':aula,
 				'AULA1':'',
 				'AULA2':'',
@@ -260,35 +264,35 @@ def create_asigt_xml(idic):
 				'HORASEM':str(idic[key]['Count']),
 				'ID':str(ID),
 				'NALUM':'',
-				'PROF':teachers[idic[key]['Teacher']]['ABREV'].decode('utf-8'),
+				'PROF':teachers[idic[key]['Teacher']]['ABREV'],
 				'TIPO':'',
 				})
   indent(asigt)
   return asigt
 
 def create_soluct_xml(saioak): 
-  #print saioak[saioak.keys()[0]]#FIXME ezabatu
-  #print saioak
+  #print(saioak[saioak.keys()[0]])#FIXME ezabatu
+  #print(saioak)
   soluct=ET.Element("SOLUCT")
   for key in saioak.keys():
     if saioak[key]['Room'] not in buildings.keys():
-	aula=""
+        aula=""
     else:
         aula = buildings[saioak[key]['Room']]['ABREV']
-    #print key
+    #print(key)
 #    if not adic[k]['Subject'] in subjects.keys():
-#      iz=raw_input("Ikagaia: ["+adic[k]['Subject'].encode('utf-8')+"]:")
-    print key,": ",saioak[key]['Group']
+#      iz=input("Ikagaia: ["+adic[k]['Subject']+"]:")
+    print(key,": ",saioak[key]['Group'])
     if saioak[key]['Group'] != ['']: 
-        cur = saioak[key]['Group'][0][0].decode('utf-8')
+        cur = saioak[key]['Group'][0][0]
     else:
         cur = ""
     if saioak[key]['Group'] != ['']: 
-        grup = saioak[key]['Group'][0][1].decode('utf-8')
+        grup = saioak[key]['Group'][0][1]
     else:
         grup = ""    
     if saioak[key]['Group'] != ['']: 
-        cgrup = saioak[key]['Group'][0].decode('utf-8')
+        cgrup = saioak[key]['Group'][0]
     else:
         cgrup = ""  
     if cur <= '4':
@@ -300,7 +304,7 @@ def create_soluct_xml(saioak):
     if grup in ['P','Q']:
       nivel = 'DIV' 
     ET.SubElement(soluct, 'SOLUCF',
-			      {'ASIG':ikasgaiak[saioak[key]['Subject']]['ABREV'].decode('utf-8'),
+			      {'ASIG':ikasgaiak[saioak[key]['Subject']]['ABREV'],
 				'AULA': aula,
 				'CODGRUPO': cgrup,
 				'CURSO':cur,
@@ -308,7 +312,7 @@ def create_soluct_xml(saioak):
 				'GRUPO':grup,
 				'HORA':str(saioak[key]['Hour']),
 				'NIVEL':nivel,
-				'PROF':teachers[saioak[key]['Teacher']]['ABREV'].decode('utf-8'),
+				'PROF':teachers[saioak[key]['Teacher']]['ABREV'],
 				'SESIONES':'1',
 				'TAREA':'',
 				'TURNO':'D',
@@ -323,7 +327,7 @@ def create_nomasigt_xml(asigc):
   for key in asigc.keys():
     ID += 1
     ET.SubElement(nomasigt, 'NOMASIGF',
-			      {'ABREV':ikasgaiak[asigc[key]['Subject']]['ABREV'].decode('utf-8'),
+			      {'ABREV':ikasgaiak[asigc[key]['Subject']]['ABREV'],
 				'ACTIV':'1',
 				'ID':str(ID),
 				'NOMBRE':asigc[key]['Subject'],				
@@ -344,27 +348,32 @@ def create_without_students_dict(teachersfile="teachers.xml"):
   d={}
   for irak in root.findall('.//Teacher'):
     irakizena=irak.get('name')
+    if irakizena not in teachers.keys():
+        print(irakizena)
+        teachers[irakizena]['ABREV'] = input("ABREV: ")
+        teachers[irakizena]['DEPART'] = input("Depart: ")
+    
     for eg in irak.findall('.//Day'):
       eguna=egunak[eg.get('name')]
       for ordu in eg.findall('.//Hour'):
-	ordua=orduak[ordu.get('name')]
-	subjects=ordu.findall('.//Subject')
-	stud=ordu.findall(".//Students")
-	rooma=ordu.findall(".//Room")
-	if rooma != []:
+        ordua=orduak[ordu.get('name')]
+        subjects=ordu.findall('.//Subject')
+        stud=ordu.findall(".//Students")
+        rooma=ordu.findall(".//Room")
+        if rooma != []:
             room = rooma[0].get('name')
         else:
             room = ""
-	if stud == [] and subjects != []:
-	  #print subjects[0].get('name'),ordua,eguna,irakizena
-	  if subjects[0].get('name') not in ikasgaiak.keys():
-	    iz=raw_input("Ikagaia: ["+subjects[0].get('name').encode('utf-8')+"]:")
-	    if iz != "": 
-	      ikasgaiak[subjects[0].get('name')]={'ABREV':iz.decode('utf-8')}
-	    else:
-	      ikasgaiak[subjects[0].get('name')]={'ABREV':subjects[0].get('name')}	    
-	  t[irakizena+subjects[0].get('name')+str(ordua)+str(eguna)]={'Count':1,'Room':"",'Group':"b",'Teacher':irakizena,'Subject':subjects[0].get('name')}
-	  d[irakizena+subjects[0].get('name')+str(ordua)+str(eguna)]={'Teacher':irakizena,'Subject':subjects[0].get('name'),'Day':eguna,'Hour':ordua,'Room':room,'Group':[""]}
+        if stud == [] and subjects != []:
+          #print(subjects[0].get('name'),ordua,eguna,irakizena)
+          if subjects[0].get('name') not in ikasgaiak.keys():
+            iz=input("Ikagaia: ["+subjects[0].get('name')+"]:")
+            if iz != "": 
+              ikasgaiak[subjects[0].get('name')]={'ABREV':iz}
+            else:
+              ikasgaiak[subjects[0].get('name')]={'ABREV':subjects[0].get('name')}	    
+          t[irakizena+subjects[0].get('name')+str(ordua)+str(eguna)]={'Count':1,'Room':"",'Group':"b",'Teacher':irakizena,'Subject':subjects[0].get('name')}
+          d[irakizena+subjects[0].get('name')+str(ordua)+str(eguna)]={'Teacher':irakizena,'Subject':subjects[0].get('name'),'Day':eguna,'Hour':ordua,'Room':room,'Group':[""]}
   return t,d
 
 def create_teacher_groups_dict2(root):
@@ -374,20 +383,20 @@ def create_teacher_groups_dict2(root):
     for eg in irak.findall('.//Day'):
       eguna=egunak[eg.get('name')]
       for ordu in eg.findall('.//Hour'):
-	ordua=orduak[ordu.get('name')]
-	subjects=ordu.findall('.//Subject')
-	if subjects!=[]:
-	  sub=subjects[0].get('name')
-	  ikasgaia=sub
-	  for a in ordu.findall(".//Students"):
-	    if a !=[]:
-	      group=str(a.get('name')[0])+str(a.get('name')[2])
-	      key=irakizena+str(eguna)+str(ordua)+group
-	      if key in t.keys():
-		t[key]['count']=t[key]['count']+1
-	      else:
-		d={'teacher':irakizena,'group':group,'subject':sub,'day':eguna,'hour':ordua,'count':1}#FIXME count beti da bat, eguna eta ordua ezberdinuak direlako
-		t[key]=d
+        ordua=orduak[ordu.get('name')]
+        subjects=ordu.findall('.//Subject')
+        if subjects!=[]:
+          sub=subjects[0].get('name')
+          ikasgaia=sub
+          for a in ordu.findall(".//Students"):
+            if a !=[]:
+              group=str(a.get('name')[0])+str(a.get('name')[2])
+              key=irakizena+str(eguna)+str(ordua)+group
+              if key in t.keys():
+                t[key]['count']=t[key]['count']+1
+              else:
+                d={'teacher':irakizena,'group':group,'subject':sub,'day':eguna,'hour':ordua,'count':1}#FIXME count beti da bat, eguna eta ordua ezberdinuak direlako
+                t[key]=d
   return t
 
 def t_txikia(a):
@@ -422,7 +431,7 @@ def prettify(elem):
 
 
 #for k in tdic.keys():
-  #print tdic[k]['teacher'],tdic[k]['groups'],tdic[k]['subject'],tdic[k]['count']
+  #print(tdic[k]['teacher'],tdic[k]['groups'],tdic[k]['subject'],tdic[k]['count'])
 
 	  #if (gps in t.keys(): t[gps]=t[gps]+1
 	#for ikas in ordu.findall('.//Students'):
@@ -433,13 +442,13 @@ def prettify(elem):
 	    
 	    #ikasleak=ikas.get('name')[0]+ikas.get('name')[2]
 	    #if ikas.get('name')[-1]=='P':ikasleak=ikasleak+'P'
-	    #print irakizena,eguna,ordua,ikasleak,ikasgaia
-    #print t
+	    #print(irakizena,eguna,ordua,ikasleak,ikasgaia)
+    #print(t)
     
 
 
-#for a in root.findall(".//ASIGT/ASIGF[@ASIG='2FRA']"): print a.attrib
-#Lortu ikasgaien izenak for a in root.findall(".//Students"): print a.get('name')[0:3]
+#for a in root.findall(".//ASIGT/ASIGF[@ASIG='2FRA']"): print(a.attrib)
+#Lortu ikasgaien izenak for a in root.findall(".//Students"): print(a.get('name')[0:3])
 #list(set([a.get('name')[0:3] for a in root.findall(".//Students")]))
 #taldeak=sorted(list(set([a.get('name')[0:3] for a in root.findall(".//Students")])))
 
@@ -465,17 +474,17 @@ def load_ikasgaiak_from_fet(root):
       b =  a.findall('.//Students')
       c =  a.findall('.//Subject')
   #    for d in c:
-  #      print d.get('name')
+  #      print(d.get('name'))
       for x in b:
-  #      print x.get('name')[0:3]
-	year=x.get('name')[0]
-	group=x.get('name')[0]+x.get('name')[2]
-	if x.get('name')[-1] == "P": 
-	  subject=d.get('name')[0:3]+"P"
-	else:
-	  subject=d.get('name')[0:3]
-	print 'ASIG='+year+d.get('name')[0:3]+' GRUP='+group
-	asigfall.append('ASIG='+year+subject+' GRUP='+group)
+  #      print(x.get('name')[0:3])
+        year=x.get('name')[0]
+        group=x.get('name')[0]+x.get('name')[2]
+        if x.get('name')[-1] == "P": 
+          subject=d.get('name')[0:3]+"P"
+        else:
+          subject=d.get('name')[0:3]
+        print('ASIG='+year+d.get('name')[0:3]+' GRUP='+group)
+        asigfall.append('ASIG='+year+subject+' GRUP='+group)
   #Talde txikiak, talde normaltzat hartzen ditu, bihurtzen dudalako 2-k-p eta 2-k-h 2-k
   count={}
   for asig in asigfall:
