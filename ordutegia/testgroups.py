@@ -74,7 +74,7 @@ def print_odf(Matrix,name):
         for day in range(5):
             tc = table.TableCell(valuetype="string", stylename="Table")
             tr.addElement(tc)
-            tc.addElement(text.P(text=Matrix[hour][day]))
+            tc.addElement(text.P(text=' - '.join(Matrix[hour][day])))
     textdoc.text.addElement(datatable)
     
 
@@ -95,10 +95,11 @@ def findsg(groups,verbose=False):
                 j = 0
                 for h in hs:
                     sub = h.findall(".//Subject")
-                    if sub != [] and Matrix[j][i].count(sub[0].attrib['name'])==0:
+                    room = h.findall(".//Room")
+                    if sub != [] and Matrix[j][i].count(sub[0].attrib['name']+' ('+room[0].attrib['name']+')')==0:
                         #print(d.attrib['name'],h.attrib['name'],sub[0].attrib['name'])
                         #print(i,j)
-                        Matrix[j][i].append(sub[0].attrib['name'])
+                        Matrix[j][i].append(sub[0].attrib['name']+' ('+room[0].attrib['name']+')')
                     j += 1
                 i += 1
         print(group)
@@ -156,5 +157,5 @@ def printmat(mat,verbose=False):
 
 groups = ['1-A','1-B','1-C','1-D','1-E','1-H','1-I','1-J','1-K','1-L','2-A','2-B','2-C','2-D','2-P','2-H','2-I','2-J','3-A','3-B','3-C','3-P','3-H','3-I','3-J','3-K','3-Q','4-A','4-B','4-C','4-D','4-H','4-I','4-J','4-K','4-L','5-A','5-B','5-H','5-I','5-J','6-A','6-B','6-H','6-I','6-J']
 #textdoc_init()
-#findsg(groups)
-findt()
+findsg(groups)
+#findt()
