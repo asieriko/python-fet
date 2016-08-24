@@ -10,12 +10,29 @@ UPLOAD_FOLDER = '/home/asier/Hezkuntza/python-hezkuntza/python-fet/webapp/files'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-def pt(sumdic):
+def pt(sumdic,headers):
+    text = "<table class=\"table table-striped\"><tr>"
+    for header in headers:
+        text += "<th>"+ header + "</th>"
+    text += '</tr>'
+    if type(sumdic) == list:
+        text += "<tr>"
+        for key in sumdic:
+            text += "<td>"+ str(key) + "</td>"
+        text += "</tr>"
+    else:
+        for key in sumdic.keys():
+            text += "<tr><td>"+ str(key) + "</td><td> " + str(sumdic[key]) + "</td></tr>"
+    text += "</table>"
+    return text
+
+def pts(sumdic):
     text = "<table class=\"table table-striped\"><tr><th>Dias completos</th><th>Profesores</th></tr>"
     for key in sumdic.keys():
         text += "<tr><td>"+ str(key) + "</td><td> " + str(sumdic[key]) + "</td></tr>"
     text += "</table>"
     return text
+
 
 def secure_filename(filename):
     time = ('{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
@@ -40,20 +57,25 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            tdic, sumdic = teachereval.evaluate(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            teachereval.write(tdic,sumdic,os.path.join(app.config['UPLOAD_FOLDER'], filename[:-3]+"csv"))
+            tdic, sumdic, summary = teachereval.evaluate(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            teachereval.write(tdic,sumdic,summary,os.path.join(app.config['UPLOAD_FOLDER'], filename[:-3]+"csv"))
             #return redirect(request.url) #redirect(url_for('uploaded_file',upload_file=filename))
             return '''
             <!DOCTYPE html>
             <html lang="es">
                 <head>
-                    <title>Evaluación de archivo</title>
+                    <title>Evaluaci&oacute;n de archivo</title>
                     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
                 </head>
                 <body>
                     <div class="jumbotron">
                         <h1>Resultados de</h1>
                         <p>%s</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">%s</div>
+                        <div class="col-md-4"></div>
                     </div>
                     <div class="row">
                         <div class="col-md-4"></div>
@@ -71,7 +93,7 @@ def upload_file():
                     </form>
                 </body>
             </html>
-            '''%(filename,pt(sumdic),filename[:-3]+"csv")
+            '''%(filename,pt(sumdic,["Dias completos","Num Profesores"]),pt(summary,["Extremos manana","Extremos mediodia","Huecos","huecos sin rec","horas/sem","horas/sem - rec","horas/sem - rec + guard rec"]),filename[:-3]+"csv")
     return '''
      <!DOCTYPE html>
     <html lang="es">
@@ -101,6 +123,6 @@ def download(filename):
     return send_from_directory(directory=uploads, filename=filename)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=8080)
     
     
