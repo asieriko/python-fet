@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import xml.etree.ElementTree as ET
+from collections import defaultdict, OrderedDict
 import csv
 
 
@@ -8,66 +9,63 @@ def evaluate(inputfile):
   root = tree.getroot()
   teachers = root.findall(".//Teacher")
   tdic={}
-  sumdic={}
+  sumtotal  = [0,0,0,0,0,0,0]
+  sumdicNew = defaultdict(int)
   for teacher in teachers:
-    totalpre=0
-    totalpost=0
-    total1and6=0
-    total1and7=0
-    totalgaps=0
+    weekdays = 5
+    playtimeguard = 0
+    totalgapsweek = 0
+    totalgapsmorning = 0
+    totalgapsevening = 0
+    totalhoursweek = 0
+    totalfulldays = 0
     name=teacher.attrib.get('name')
     days = teacher.findall(".//Day")
     for day in days:
       hours=day.findall(".//Hour")
-      prefirst=-1#1. hutsunea?
-      activities=0
-      lastactivity=6
-      first=False
-      last6=False
-      last7=False
-      atsedenaldi=0
-      gaps=0
+      lasthour = 0
+      firsthour = 10
+      hoursday = 0
+      activitiesday = 0
+      gapsday = 0
       for i in range(len(hours)):
         subject=hours[i].findall(".//Subject")
-        if subject == [] and i-1 == prefirst: prefirst=i
-        if subject == [] and i==3 and prefirst == 2: atsedenaldi = -1
-        if subject == [] and i-1 != prefirst: gaps += 1
-        if subject != []: activities += 1
-        if subject != []: lastactivity = i
-        if subject != [] and i==0: first=True
-        if subject != [] and i==6: last6=True
-        if subject != [] and i==7:
-          last7=True
-          last6=False
-      if prefirst<6:
-        totalpre += prefirst+1+atsedenaldi #+1 hasten delako 0n, eta <6, bestela esan nahi duelako egun osoa 7 orduak libre dituela, bestela atsedenaldia hutsune bezala hartzen du
-        if lastactivity>3 and prefirst<3:
-          totalgaps += lastactivity - activities - prefirst - 1
-        else:
-          totalgaps += lastactivity - activities - prefirst
-      #if prefirst<6: totalgaps = gaps - (6-lastactivity)
-      if lastactivity<6: totalpost += 6-lastactivity
-      if lastactivity<=3:totalpost -= 1 #atsedenaldia hutsune bezlaa ez hartzeko
-      if first and last6: total1and6 += 1
-      if first and last7: total1and7 += 1
-    tdic[name.encode('utf-8')]=(name.encode('utf-8'),totalpre,totalpost,totalgaps,total1and6,total1and7,total1and6+total1and7)
-    if total1and6+total1and7 in sumdic.keys():
-      sumdic[total1and6+total1and7] += 1
-    else:
-      sumdic[total1and6+total1and7] = 1
+        if subject != []: 
+            lasthour = i
+            activitiesday += 1
+            if i == 3:
+                playtimeguard += 1
+        if subject != [] and i < firsthour: 
+            firsthour = i
+      if firsthour == 10: 
+          firsthour = 0 #I've to find what is the first hour, but if a teacher doesn't have any clasess in a day it takes firsthour as 10
+          weekdays -= 1
+      hoursday = lasthour - firsthour + 1
+      gapsday = hoursday - activitiesday
+      if hoursday >= 7:
+        totalfulldays += 1
+      totalgapsweek += gapsday
+      totalhoursweek += hoursday
+      totalgapsmorning += firsthour
+      totalgapsevening += max(6-lasthour,0) #FIXME: Having the last hour only some teachers, and being like an extaordinary hour, it can also be negative...
+    tdic[name]=(name,totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays)
+    sumtotal = [sum(x) for x in zip(sumtotal, [totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays])]
+    sumdicNew[totalfulldays] += 1
 
-  return tdic, sumdic
+  return OrderedDict(sorted(tdic.items())), sumdicNew, sumtotal
 
-def write(tdic,sumdic,outputfile):
+def write(tdic,sumdic,sumtotal, outputfile):
   with open(outputfile, 'w') as f:
     writer = csv.writer(f)
-    header=('irakaslea','goizeko hutsuenak','eguerdiko hutsuneak','erdiko hutsuneak','1 eta 6','1 eta 7','1 eta azkena')
-    writer.writerow(', '.join(header))
+    header=(['irakaslea','goizeko hutsuenak','eguerdiko hutsuneak','erdiko hutsuneak','erdiko hutsuneak atsedenaldia kanpo','Asteko orduak atsedenaldia barne', 'Asteko orduak atsedenaldia kanpo', 'Asteko orduak atsedenaldia kanpo - zaintzak barne','Egun oso kopurua'])
+    writer.writerow(header)
     writer.writerows(tdic[key] for key in tdic.keys())
-    header=sumdic.keys()
+    sumtotal = [['Total:']+ [str(x) for x in sumtotal]]
+    print(sumtotal)
+    writer.writerows(sumtotal)
     print(sumdic)
-    writer.writerow(('Resumen: Numero de personas con x dias completos',''))
-    writer.writerow(', '.join(str(h) for h in header))
+    writer.writerow((['Resumen: Numero de personas con x dias completos']))
+    writer.writerow(sumdic.keys())
     writer.writerow(list(str(sumdic[key]) for key in sumdic.keys()))
     print("Resumen archivo:  (Escrito en "+ outputfile+")")
 

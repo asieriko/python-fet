@@ -34,13 +34,13 @@ class Ui(QtWidgets.QMainWindow):
     @QtCore.pyqtSlot()
     def processdata(self):
         print("Process to: " + self.outcsvdir+self.name+".csv")
-        tdic, sumdic = teachereval.evaluate(self.inputxmlf)
+        tdic, sumdic, sumtotal = teachereval.evaluate(self.inputxmlf)
         for key in sumdic.keys():
             self.ui.tableWidget.setItem(int(key), 0, QtWidgets.QTableWidgetItem(str(sumdic[key])))
 
         try:
             file = self.outcsvdir+self.name+".csv"
-            teachereval.write(tdic,sumdic,file)
+            teachereval.write(tdic,sumdic,sumtotal, file)
             QtWidgets.QMessageBox.information(self, 'File writed', ''' Results writed in: ''' + file,QtWidgets.QMessageBox.Ok)
         except Exception as e:
             print("Error writing file: ", e)

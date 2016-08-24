@@ -66,11 +66,13 @@
         <item>
          <widget class="QTableWidget" name="tableWidget_2">
           <property name="rowCount">
-           <number>6</number>
+           <number>8</number>
           </property>
           <property name="columnCount">
            <number>1</number>
           </property>
+          <row/>
+          <row/>
           <row/>
           <row/>
           <row/>
@@ -97,7 +99,7 @@
            </widget>
           </item>
           <item>
-          <widget class="QPushButton" name="libreButton">
+           <widget class="QPushButton" name="libreButton">
             <property name="text">
              <string>Libre</string>
             </property>
@@ -174,7 +176,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>30</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

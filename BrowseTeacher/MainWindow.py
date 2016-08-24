@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import uic, QtWidgets, QtCore, QtGui
 import xml.etree.ElementTree as ET
+from collections import defaultdict, OrderedDict
 from lxml import etree
 import sys, os
 #import ../TimetableEval/teachereval
@@ -21,7 +22,7 @@ class Ui(QtWidgets.QMainWindow):
         self.ui.tableWidget.setVerticalHeaderLabels(["08:30\n-\n9:25","09:25\n-\n10:20","10:20\n-\n11:15","11:15\n-\n11:45","11:45\n-\n12:40","12:40\n-\n13:35","13:35\n-\n14:30","14:30\n-\n15:20"]);
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(1)
         self.ui.tableWidget.verticalHeader().setSectionResizeMode(1)
-        self.ui.tableWidget_2.setVerticalHeaderLabels(["Extremos mañana","Extremos mediodia","Huecos","Entrar 1, Salir 6","Entrar 1, Salir 7","Dias completos"]);
+        self.ui.tableWidget_2.setVerticalHeaderLabels(["Extremos mañana","Extremos mediodia","Huecos","huecos sin rec","horas/sem","horas/sem - rec","horas/sem - rec + guard rec","Dias completos"]);
         self.ui.tableWidget_2.setHorizontalHeaderLabels(["Kopurua"]);
         self.ui.tableWidget_2.verticalHeader().setSectionResizeMode(1)
         self.ui.denakRB.toggled.connect(self.tog)
@@ -154,63 +155,57 @@ class Ui(QtWidgets.QMainWindow):
     def evaluateAll(self):
         #FIXME: This function is a duplicate of the one in ../TimetableEval/teachereval.py
         teachers = self.root.findall(".//Teacher")
-        tdic={}
-        sumdic={}
+        sumtotal  = [0,0,0,0,0,0,0]
+        sumdicNew = defaultdict(int)
         for teacher in teachers:
-            totalpre=0
-            totalpost=0
-            total1and6=0
-            total1and7=0
-            totalgaps=0
+            weekdays = 5
+            playtimeguard = 0
+            totalgapsweek = 0
+            totalgapsmorning = 0
+            totalgapsevening = 0
+            totalhoursweek = 0
+            totalfulldays = 0
             name=teacher.attrib.get('name')
             days = teacher.findall(".//Day")
             for day in days:
                 hours=day.findall(".//Hour")
-                prefirst=-1#1. hutsunea?
-                activities=0
-                lastactivity=6
-                first=False
-                last6=False
-                last7=False
-                atsedenaldi=0
-                gaps=0
+                lasthour = 0
+                firsthour = 10
+                hoursday = 0
+                activitiesday = 0
+                gapsday = 0
                 for i in range(len(hours)):
                     subject=hours[i].findall(".//Subject")
-                    if subject == [] and i-1 == prefirst: prefirst=i
-                    if subject == [] and i==3 and prefirst == 2: atsedenaldi = -1
-                    if subject == [] and i-1 != prefirst: gaps += 1
-                    if subject != []: activities += 1
-                    if subject != []: lastactivity = i
-                    if subject != [] and i==0: first=True
-                    if subject != [] and i==6: last6=True
-                    if subject != [] and i==7:
-                        last7=True
-                        last6=False
-                if prefirst<6:
-                    totalpre += prefirst+1+atsedenaldi #+1 hasten delako 0n, eta <6, bestela esan nahi duelako egun osoa 7 orduak libre dituela, bestela atsedenaldia hutsune bezala hartzen du
-                    if lastactivity>3 and prefirst<3:
-                        totalgaps += lastactivity - activities - prefirst - 1
-                    else:
-                        totalgaps += lastactivity - activities - prefirst
-                #if prefirst<6: totalgaps = gaps - (6-lastactivity)
-                if lastactivity<6: totalpost += 6-lastactivity
-                if lastactivity<=3:totalpost -= 1 #atsedenaldia hutsune bezlaa ez hartzeko
-                if first and last6: total1and6 += 1
-                if first and last7: total1and7 += 1
-            tdic[name.encode('utf-8')]=(name.encode('utf-8'),totalpre,totalpost,totalgaps,total1and6,total1and7,total1and6+total1and7)
-            if total1and6+total1and7 in sumdic.keys():
-                sumdic[total1and6+total1and7] += 1
-            else:
-                sumdic[total1and6+total1and7] = 1
+                    if subject != []: 
+                        lasthour = i
+                        activitiesday += 1
+                        if i == 3:
+                            playtimeguard += 1
+                    if subject != [] and i < firsthour: 
+                        firsthour = i
+                if firsthour == 10: 
+                    firsthour = 0 #I've to find what is the first hour, but if a teacher doesn't have any clasess in a day it takes firsthour as 10
+                    weekdays -= 1
+                hoursday = lasthour - firsthour + 1
+                gapsday = hoursday - activitiesday
+                if hoursday >= 7:
+                    totalfulldays += 1
+                totalgapsweek += gapsday
+                totalhoursweek += hoursday
+                totalgapsmorning += firsthour
+                totalgapsevening += max(6-lasthour,0) #FIXME: Having the last hour only some teachers, and being like an extaordinary hour, it can also be negative...
+            
+            sumtotal = [sum(x) for x in zip(sumtotal, [totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays])]
+            sumdicNew[totalfulldays] += 1
 
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Information)
 
         msg.setText("Global Timetable Results")
-        header=sumdic.keys()
+        header=sumdicNew.keys()
         text = ""
-        for key in sumdic.keys():
-            text += "\n"+ str(key) + ":\t " + str(sumdic[key]) 
+        for key in sumdicNew.keys():
+            text += "\n"+ str(key) + ":\t " + str(sumdicNew[key]) 
         print(text)
         
         msg.setInformativeText(text)
@@ -218,52 +213,52 @@ class Ui(QtWidgets.QMainWindow):
         
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
         msg.exec_()
-        
-        return tdic, sumdic
 
+
+        return OrderedDict(sorted(tdic.items())), sumdicNew, sumtotal
+  
+  
     def evaluate(self,teachername):
         teacher = self.root.findall(".//Teacher[@name='"+teachername+"']")[0]
-        totalpre=0
-        totalpost=0
-        total1and6=0
-        total1and7=0
-        totalgaps=0
+        weekdays = 5
+        playtimeguard = 0
+        totalgapsweek = 0
+        totalgapsmorning = 0
+        totalgapsevening = 0
+        totalhoursweek = 0
+        totalfulldays = 0
         days = teacher.findall(".//Day")
         for day in days:
-          hours=day.findall(".//Hour")
-          prefirst=-1#1. hutsunea?
-          activities=0
-          lastactivity=6
-          first=False
-          last6=False
-          last7=False
-          atsedenaldi=0
-          gaps=0
-          for i in range(len(hours)):
-            subject=hours[i].findall(".//Subject")
-            if subject == [] and i-1 == prefirst: prefirst=i
-            if subject == [] and i==3 and prefirst == 2: atsedenaldi = -1
-            if subject == [] and i-1 != prefirst: gaps += 1
-            if subject != []: activities += 1
-            if subject != []: lastactivity = i
-            if subject != [] and i==0: first=True
-            if subject != [] and i==6: last6=True
-            if subject != [] and i==7:
-              last7=True
-              last6=False
-          if prefirst<6:
-            totalpre += prefirst+1+atsedenaldi #+1 hasten delako 0n, eta <6, bestela esan nahi duelako egun osoa 7 orduak libre dituela, bestela atsedenaldia hutsune bezala hartzen du
-            if lastactivity>3 and prefirst<3:
-              totalgaps += lastactivity - activities - prefirst - 1
-            else:
-              totalgaps += lastactivity - activities - prefirst
-          #if prefirst<6: totalgaps = gaps - (6-lastactivity)
-          if lastactivity<6: totalpost += 6-lastactivity
-          if lastactivity<=3:totalpost -= 1 #atsedenaldia hutsune bezlaa ez hartzeko
-          if first and last6: total1and6 += 1
-          if first and last7: total1and7 += 1
-        items = [totalpre,totalpost,totalgaps,total1and6,total1and7,total1and6+total1and7]
-        for i in range(6):
+            hours=day.findall(".//Hour")
+            lasthour = 0
+            firsthour = 10
+            hoursday = 0
+            activitiesday = 0
+            gapsday = 0
+            for i in range(len(hours)):
+                subject=hours[i].findall(".//Subject")
+                if subject != []: 
+                    lasthour = i
+                    activitiesday += 1
+                    if i == 3:
+                        playtimeguard += 1
+                if subject != [] and i < firsthour: 
+                    firsthour = i
+            if firsthour == 10: 
+                firsthour = 0 #I've to find what is the first hour, but if a teacher doesn't have any clasess in a day it takes firsthour as 10
+                weekdays -= 1
+            hoursday = lasthour - firsthour + 1
+            gapsday = hoursday - activitiesday
+            if hoursday >= 7:
+                totalfulldays += 1
+            totalgapsweek += gapsday
+            totalhoursweek += hoursday
+            totalgapsmorning += firsthour
+            totalgapsevening += max(6-lasthour,0) #FIXME: Having the last hour only some teachers, and being like an extaordinary hour, it can also be negative...
+        
+        
+        items = [totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays]
+        for i in range(8):
             self.ui.tableWidget_2.setItem(i, 0, QtWidgets.QTableWidgetItem(str(items[i])))
 
 if __name__ == '__main__':
