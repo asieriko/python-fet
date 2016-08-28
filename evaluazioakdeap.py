@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from collections import defaultdict
+import csv
 
 import random
 
@@ -50,7 +51,43 @@ class ebaluazioak():
         '''
         self.groupspartition = best
     
-    def read_data(self):
+    def read_data(self,file):
+        '''
+        gets the groups and teachers data from a fet teachers.xml file or a CSV file
+        '''
+        if file[-3:] == "fet":
+            self.read_FET(file)
+        elif file[-3:] == "csv":
+            self.read_CSV(file)
+        else:
+            print("File format not accepted")
+            
+            
+    def read_CSV(self,file,headers=False):
+        '''
+        CSV file must be a row for each group and a column for each teacher in the group
+        1A;Teacher1;Teacher2;Teacher3
+        1B;Teacher4;Teacher2;Teacher5
+        '''
+        with open(file,'r') as results:
+                reader = csv.reader(results,delimiter=",")
+                if headers:
+                    next(reader,None)
+                for row in reader:
+                    group = row[0]
+                    if group in self.forbidden:
+                        continue
+                    self.allgroups.append(group)
+                    for teacher in row[1:]:
+                        if teacher != '':
+                            self.gdic[group].append(teacher)
+                            if teacher in self.tdic.keys():
+                                self.tdic[teacher].append(group)
+                            else:
+                                self.tdic[teacher] = [group]
+        print(self.allgroups)
+        
+    def read_FET(self,file):
         '''
         gets the groups and teachers data from a fet teachers.xml file
         '''
@@ -199,28 +236,45 @@ def configure_deap(size,evfun):
 def main():
     ev = ebaluazioak()
     ev.set_forbidden(['B','M','6'])
-    pop, stats, hof = best_ev_grouping(ev)
+    
+    file = input("Enter the .fet or .csv filepath: ")
+    ev.read_data(file)
+    
+    data = {'sessions':12,'days':2,'population': 300,'generations':400}
+    
+    pop, stats, hof = best_ev_grouping(ev,data)
+    
     print("best element: ")
     best = hof.items[0]
     bestg = ev.permutationtogroups(best)
-    print(bestg)
+    print(bestg,stats)
+    
     partitiongrouped = [hof.items[0][ev.indices[i]:ev.indices[i+1]] for i in range(ev.sessions)]
-    pop, stats, hof = best_ev_days(ev,partitiongrouped)
+    
+    popd, statsd, hofd = best_ev_days(ev,partitiongrouped,data)
+    
     dayg = []
-    for e in hof.items[0]:
+    for e in hofd.items[0]:
         dayg.append(bestg[e])
-    daygrouped = [dayg[ev.indicesd[i]:ev.indicesd[i+1]] for i in range(ev.sessions_d)]
+    daygrouped = [dayg[ev.indicesd[i]:ev.indicesd[i+1]] for i in range(ev.days)]
     print("------------------------")
     print("best day distribution: ")
-    print(hof.items[0])
-    print(daygrouped)
+    #print(hofd.items[0])
+    record = stats.compile(pop)
+    print(record)
+    recordd = statsd.compile(popd)
+    print(recordd)
+    for i,day in enumerate(daygrouped):
+        print(i+1,"st day:")
+        for j,hour in enumerate(day):
+            print(j+1,": ",sorted(hour))
     
     
-def best_ev_grouping(ev):    
-    ev.read_data()
-    ev.set_sessions(12)
+def best_ev_grouping(ev,data):    
+    #ev.read_data()
+    ev.set_sessions(data['sessions'])
     toolbox = configure_deap(len(ev.allgroups),ev.evaluateInd)
-    pop = toolbox.population(n=300)
+    pop = toolbox.population(n=data['population'])
     hof = tools.HallOfFame(1)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     #stats.register("Avg", tools.mean)
@@ -228,16 +282,16 @@ def best_ev_grouping(ev):
     stats.register("Min", min)
     stats.register("Max", max)
     
-    algorithms.eaSimple(pop, toolbox, 0.5, 0.1, 4000, stats, halloffame=hof)
+    algorithms.eaSimple(pop, toolbox, 0.5, 0.1, data['generations'], stats, halloffame=hof)
     return pop, stats, hof
 
-def best_ev_days(ev,best):
+def best_ev_days(ev,best,data):
     ev.set_best_evs(best)
-    ev.set_days(2)
+    ev.set_days(data['days'])
     
     toolbox = configure_deap(len(best),ev.evaluateDay)
     
-    pop = toolbox.population(n=300)
+    pop = toolbox.population(n=data['population'])
     hof = tools.HallOfFame(1)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     #stats.register("Avg", tools.mean)
@@ -245,7 +299,7 @@ def best_ev_days(ev,best):
     stats.register("Min", min)
     stats.register("Max", max)
     
-    algorithms.eaSimple(pop, toolbox, 0.5, 0.1, 4000, stats, halloffame=hof)
+    algorithms.eaSimple(pop, toolbox, 0.5, 0.1, data['generations'], stats, halloffame=hof)
     return pop, stats, hof
 
 if __name__ == "__main__":
