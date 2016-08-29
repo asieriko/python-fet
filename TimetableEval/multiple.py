@@ -15,7 +15,7 @@ def recev():
                 t,s,lab = teachereval.evaluate(os.path.join(subdir, file))
                 if not 5 in s.keys():
                     s[5] = 0
-                l.append([os.path.join(subdir, file),s[4]+s[5],s[0],lab[-2],s])
+                l.append([os.path.join(subdir, file),s[4]+s[5],s[0],lab[-3],s])
                 #for k in s.keys():
                     #print(k,": ",s[k])
                 #print(s)

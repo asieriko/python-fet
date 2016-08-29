@@ -66,11 +66,12 @@
         <item>
          <widget class="QTableWidget" name="tableWidget_2">
           <property name="rowCount">
-           <number>8</number>
+           <number>9</number>
           </property>
           <property name="columnCount">
            <number>1</number>
           </property>
+          <row/>
           <row/>
           <row/>
           <row/>

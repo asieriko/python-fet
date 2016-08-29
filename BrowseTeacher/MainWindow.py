@@ -22,7 +22,7 @@ class Ui(QtWidgets.QMainWindow):
         self.ui.tableWidget.setVerticalHeaderLabels(["08:30\n-\n9:25","09:25\n-\n10:20","10:20\n-\n11:15","11:15\n-\n11:45","11:45\n-\n12:40","12:40\n-\n13:35","13:35\n-\n14:30","14:30\n-\n15:20"]);
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(1)
         self.ui.tableWidget.verticalHeader().setSectionResizeMode(1)
-        self.ui.tableWidget_2.setVerticalHeaderLabels(["Extremos mañana","Extremos mediodia","Huecos","huecos sin rec","horas/sem","horas/sem - rec","horas/sem - rec + guard rec","Dias completos"]);
+        self.ui.tableWidget_2.setVerticalHeaderLabels(["Extremos mañana","Extremos mediodia","Huecos","huecos sin rec","horas/sem","horas/sem - rec","horas/sem - rec + guard rec","Dias completos","1ª-7ª"]);
         self.ui.tableWidget_2.setHorizontalHeaderLabels(["Kopurua"]);
         self.ui.tableWidget_2.verticalHeader().setSectionResizeMode(1)
         self.ui.denakRB.toggled.connect(self.tog)
@@ -155,7 +155,7 @@ class Ui(QtWidgets.QMainWindow):
     def evaluateAll(self):
         #FIXME: This function is a duplicate of the one in ../TimetableEval/teachereval.py
         teachers = self.root.findall(".//Teacher")
-        sumtotal  = [0,0,0,0,0,0,0]
+        sumtotal  = [0,0,0,0,0,0,0,0]
         sumdicNew = defaultdict(int)
         for teacher in teachers:
             weekdays = 5
@@ -165,6 +165,7 @@ class Ui(QtWidgets.QMainWindow):
             totalgapsevening = 0
             totalhoursweek = 0
             totalfulldays = 0
+            total17days = 0
             name=teacher.attrib.get('name')
             days = teacher.findall(".//Day")
             for day in days:
@@ -190,13 +191,16 @@ class Ui(QtWidgets.QMainWindow):
                 gapsday = hoursday - activitiesday
                 if hoursday >= 7:
                     totalfulldays += 1
+                if firsthour == 0 and lasthour == 7:
+                    total17days += 1
                 totalgapsweek += gapsday
                 totalhoursweek += hoursday
                 totalgapsmorning += firsthour
                 totalgapsevening += max(6-lasthour,0) #FIXME: Having the last hour only some teachers, and being like an extaordinary hour, it can also be negative...
             
-            sumtotal = [sum(x) for x in zip(sumtotal, [totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays])]
+            sumtotal = [sum(x) for x in zip(sumtotal, [totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays,total17days])]
             sumdicNew[totalfulldays] += 1
+            sumdicNew["1-7"] += total17days
 
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Information)
@@ -227,6 +231,7 @@ class Ui(QtWidgets.QMainWindow):
         totalgapsevening = 0
         totalhoursweek = 0
         totalfulldays = 0
+        total17days = 0
         days = teacher.findall(".//Day")
         for day in days:
             hours=day.findall(".//Hour")
@@ -251,14 +256,16 @@ class Ui(QtWidgets.QMainWindow):
             gapsday = hoursday - activitiesday
             if hoursday >= 7:
                 totalfulldays += 1
+            if firsthour == 0 and lasthour == 7:
+                    total17days += 1
             totalgapsweek += gapsday
             totalhoursweek += hoursday
             totalgapsmorning += firsthour
             totalgapsevening += max(6-lasthour,0) #FIXME: Having the last hour only some teachers, and being like an extaordinary hour, it can also be negative...
         
         
-        items = [totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays]
-        for i in range(8):
+        items = [totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays, total17days]
+        for i in range(9):
             self.ui.tableWidget_2.setItem(i, 0, QtWidgets.QTableWidgetItem(str(items[i])))
 
 if __name__ == '__main__':

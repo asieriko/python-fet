@@ -9,7 +9,7 @@ def evaluate(inputfile):
   root = tree.getroot()
   teachers = root.findall(".//Teacher")
   tdic={}
-  sumtotal  = [0,0,0,0,0,0,0]
+  sumtotal  = [0,0,0,0,0,0,0,0]
   sumdicNew = defaultdict(int)
   for teacher in teachers:
     weekdays = 5
@@ -19,6 +19,7 @@ def evaluate(inputfile):
     totalgapsevening = 0
     totalhoursweek = 0
     totalfulldays = 0
+    total17days = 0
     name=teacher.attrib.get('name')
     days = teacher.findall(".//Day")
     for day in days:
@@ -44,20 +45,23 @@ def evaluate(inputfile):
       gapsday = hoursday - activitiesday
       if hoursday >= 7:
         totalfulldays += 1
+      if firsthour == 0 and lasthour == 7:
+        total17days += 1
       totalgapsweek += gapsday
       totalhoursweek += hoursday
       totalgapsmorning += firsthour
       totalgapsevening += max(6-lasthour,0) #FIXME: Having the last hour only some teachers, and being like an extaordinary hour, it can also be negative...
-    tdic[name]=(name,totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays)
-    sumtotal = [sum(x) for x in zip(sumtotal, [totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays])]
+    tdic[name]=(name,totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays,total17days)
+    sumtotal = [sum(x) for x in zip(sumtotal, [totalgapsmorning,totalgapsevening,totalgapsweek,totalgapsweek - weekdays + playtimeguard,totalhoursweek,totalhoursweek - weekdays, totalhoursweek - weekdays + playtimeguard,totalfulldays,total17days])]
     sumdicNew[totalfulldays] += 1
+    sumdicNew["1-7"] += total17days
 
   return OrderedDict(sorted(tdic.items())), sumdicNew, sumtotal
 
 def write(tdic,sumdic,sumtotal, outputfile):
   with open(outputfile, 'w') as f:
     writer = csv.writer(f)
-    header=(['irakaslea','goizeko hutsuenak','eguerdiko hutsuneak','erdiko hutsuneak','erdiko hutsuneak atsedenaldia kanpo','Asteko orduak atsedenaldia barne', 'Asteko orduak atsedenaldia kanpo', 'Asteko orduak atsedenaldia kanpo - zaintzak barne','Egun oso kopurua'])
+    header=(['irakaslea','goizeko hutsuenak','eguerdiko hutsuneak','erdiko hutsuneak','erdiko hutsuneak atsedenaldia kanpo','Asteko orduak atsedenaldia barne', 'Asteko orduak atsedenaldia kanpo', 'Asteko orduak atsedenaldia kanpo - zaintzak barne','Egun oso kopurua','1-7 kopurua'])
     writer.writerow(header)
     writer.writerows(tdic[key] for key in tdic.keys())
     sumtotal = [['Total:']+ [str(x) for x in sumtotal]]
