@@ -35,6 +35,9 @@ def pts(sumdic):
 
 
 def secure_filename(filename):
+    #for python2
+    #d = datetime.datetime.now()
+    #time = d.strftime("%Y-%m-%d %H:%M:%S")
     time = ('{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
     return (time + filename).replace(" ","")
 
@@ -60,6 +63,7 @@ def upload_file():
             tdic, sumdic, summary = teachereval.evaluate(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             teachereval.write(tdic,sumdic,summary,os.path.join(app.config['UPLOAD_FOLDER'], filename[:-3]+"csv"))
             #return redirect(request.url) #redirect(url_for('uploaded_file',upload_file=filename))
+            #FIXME: descargar csv could use /fet in href
             return '''
             <!DOCTYPE html>
             <html lang="es">
@@ -91,6 +95,7 @@ def upload_file():
                             <div class="col-md-4"></div>
                         </div>
                     </form>
+                    <a class="label label-primary" href="/fet/list">List</a>
                 </body>
             </html>
             '''%(filename,pt(sumdic,["Dias completos","Num Profesores"]),pt(summary,["Extremos manana","Extremos mediodia","Huecos","huecos sin rec","horas/sem","horas/sem - rec","horas/sem - rec + guard rec"]),filename[:-3]+"csv")
@@ -113,6 +118,7 @@ def upload_file():
                     </div>
                     
             </form>
+            <a class="label label-primary" href="/fet/list">List</a>
         </body>
     </html>
     '''
@@ -121,6 +127,26 @@ def upload_file():
 def download(filename):
     uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     return send_from_directory(directory=uploads, filename=filename)
+
+import os
+
+@app.route('/list', methods=['GET', 'POST'])
+def list_files():
+    html = '''<html>
+    <head>
+    <title>Listado de horarios generados</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    </head>
+    <body>
+    <h1>Listado de archivos csv y xml subidos al evaluador</h1>
+    <ul class="list-group">'''
+    for file in os.listdir(app.config['UPLOAD_FOLDER']):
+        if file.endswith(".csv"):
+            html += '''<li class="list-group-item">'''+file[:-4]+''': <a class="label label-primary" href="/fet/csv/''' + file + '''">*.csv </a>-/-<a class="label label-primary" href="/fet/csv/''' + file[:-3] + '''xml">teachers.xml</a></li>'''
+    html += '''</ul><a class="label label-primary" href="/fet">Main</a></body></html>'''
+    return html
+
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
