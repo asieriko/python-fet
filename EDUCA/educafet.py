@@ -4,29 +4,35 @@ import xml.dom.minidom
 from xml.etree import ElementTree as ET
 from datetime import datetime
 from itertools import chain
-import datuak
+#import datuak
 #educaren soluziotik, dictionary bat egin(irakasle-talde-gela) eta zenbatu, hori izango da ikasgaian jarri behar den balioa.
 #agina interaktiboki izen batzuk jarri 
 
-buildings=datuak.buildings
-teachers=datuak.irakasleak
-orduak=datuak.orduak
-egunak=datuak.egunak
-ikasgaiak=datuak.ikasgaiak
+#buildings=datuak.buildings
+#teachers=datuak.irakasleak
+#orduak=datuak.orduak
+#egunak=datuak.egunak
+#ikasgaiak=datuak.ikasgaiak
 
 def generate_all():
-  grdic = load_groups_rooms_file()
+  teachers = load_irakasle_file("/home/asier/Hezkuntza/python-hezkuntza/python-fet/15-16/irakasle.csv")
+  buildings = load_gelak_file("/home/asier/Hezkuntza/python-hezkuntza/python-fet/15-16/gelak.csv")
+  ikasgaiak = load_subjects_file("/home/asier/Hezkuntza/python-hezkuntza/python-fet/15-16/subjects.csv")
+  orduak = {'10:20-11:15': 3, '13:35-14:30': 6, '11:45-12:40': 4, '11:15-11:45': 0, '08:30-9:25': 1, '14:30-15:20': 8, '12:40-13:35': 5, '09:25-10:20': 2}
+  egunak = {'Asteartea': 2, 'Ostirala': 5, 'Asteazkena': 3, 'Astelehena': 1, 'Osteguna': 4}
+  grdic = load_groups_rooms_file(egunak,orduak,"/home/asier/Hezkuntza/python-hezkuntza/python-fet/15-16/subgroups.xml")
   adic = extract_asigf_from_groups(grdic)
-  wsdic,zdic = create_without_students_dict()
+  print(teachers)
+  wsdic,zdic = create_without_students_dict(teachers,ikasgaiak,egunak,orduak,"/home/asier/Hezkuntza/python-hezkuntza/python-fet/15-16/teachers.xml")
   adic.update(wsdic)
   gdic = extract_taldeak_from_groups(grdic)
   agrdic = {**grdic, **zdic}
-  soluct = create_soluct_xml(agrdic)
-  asigt = create_asigt_xml(adic)
-  proft = create_proft_xml()
+  soluct = create_soluct_xml(agrdic,teachers,ikasgaiak,buildings)
+  asigt = create_asigt_xml(adic,buildings,teachers,ikasgaiak)
+  proft = create_proft_xml(teachers)
   grupt = create_grupt_xml(gdic)
-  aulat = create_aulat_xml()
-  nomasigt = create_nomasigt_xml(adic)
+  aulat = create_aulat_xml(buildings)
+  nomasigt = create_nomasigt_xml(adic,ikasgaiak)
   tree = create_educa_xml()
   root = tree.getroot()
   root.append(asigt)
@@ -42,7 +48,7 @@ def load_irakasle_file(CSVfile="irakasle.csv",interactive=False):
   #Besterik gabe, irakasleen hiztegia egiteko.
   #FIXME: Uste dut ez dela erabiltzen...
   irakasleak={}
-  with open(CSVfile,'rb') as csvfile: 
+  with open(CSVfile,'rt') as csvfile: 
     reader = csv.reader(csvfile,delimiter=',')
     for r in reader:
       irakasle={}
@@ -51,25 +57,38 @@ def load_irakasle_file(CSVfile="irakasle.csv",interactive=False):
         if iz != "": irakasle['NOMBRE']=iz
       else:
         irakasle['NOMBRE']=r[2]
-      irakasle['ABREV']=r[0]
+      irakasle['ABREV']=r[1]
       irakasle['DEPART']=r[3]
-      irakasleak[r[1]]=irakasle
+      irakasleak[r[0]]=irakasle
   return irakasleak
 
 def load_gelak_file(CSVfile="gelak.csv",interactive=False):
   #FIXME: Uste dut ez dela erabiltzen...
   gelak={}
-  with open(CSVfile,'rb') as csvfile: 
+  with open(CSVfile,'rt') as csvfile: 
     reader = csv.reader(csvfile,delimiter=',')
     for r in reader:
       gela={}
       gela['EDIFICIO']=r[2]
-      gela['ABREV']=r[1]
-      gela['NOMBRE']=r[0]
+      gela['ABREV']=r[0]
+      gela['NOMBRE']=r[1]
       gelak[r[0]]=gela
   return gelak
 
-def load_groups_rooms_file(xmlfile='subgroups.xml'):
+def load_subjects_file(CSVfile="subjects.csv",interactive=False):
+  #FIXME: Uste dut ez dela erabiltzen...
+  subjects={}
+  with open(CSVfile,'rt') as csvfile: 
+    reader = csv.reader(csvfile,delimiter=',')
+    for r in reader:
+      subject={}
+      subject['ABREV']=r[2]
+      subject['NOMBRE']=r[1]
+      subjects[r[0]]=subject
+  return subjects
+
+
+def load_groups_rooms_file(egunak,orduak,xmlfile='subgroups.xml'):
   #in: fet's subgroups.xml file
   #out: dic {u'M\xaa \xc1ngeles Mar466A': {'Group': [u'6A'], 'Room': '6.A', 'Hour': 6, 'Teacher': u'M\xaa \xc1ngeles Mar', 'Day': 4, 'Subject': u'F\xedsica'}}
   tree=ET.parse(xmlfile)
@@ -171,7 +190,7 @@ def write_educa_xml(tree,educafile="educa.xml"):
   
 
 
-def create_proft_xml(irakasleak=teachers):
+def create_proft_xml(irakasleak):
   proft=ET.Element("PROFT")
   ID=0
   for irakasle in irakasleak.keys():
@@ -185,7 +204,7 @@ def create_proft_xml(irakasleak=teachers):
   indent(proft)
   return proft
 
-def create_aulat_xml(gelak=buildings):
+def create_aulat_xml(gelak):
   aulat=ET.Element("AULAT")
   ID=0
   for gela in gelak.keys():
@@ -228,7 +247,7 @@ def create_grupt_xml(taldeak):
   return grupt		
 
 
-def create_asigt_xml(idic):
+def create_asigt_xml(idic,buildings,teachers,ikasgaiak):
   #ind: dic: { u'3KIbai Go\xf1iHiritartasuna3.JK': {'Count': 1, 'Room': '3.JK', 'Group': '3K', 'Teacher': u'Ibai Go\xf1i', 'Subject': 'Hiritartasuna'}}
   #out: educa's ASIGT element
   asigt=ET.Element("ASIGT")
@@ -248,7 +267,7 @@ def create_asigt_xml(idic):
     else:
       aula = buildings[idic[key]['Room']]['ABREV']
       edificio = buildings[idic[key]['Room']]['EDIFICIO']
-    if idic[key]['Subject'] not in teachers.keys():
+    if idic[key]['Subject'] not in ikasgaiak.keys(): #teachers.keys()
         print(ikasgaiak[idic[key]['Subject']])
         ikasgaiak[idic[key]['Subject']]['ABREV'] = input("ABREV: ")
         ikasgaiak[idic[key]['Subject']]['NOMBRE'] = input("NOMBRE: ")
@@ -270,7 +289,7 @@ def create_asigt_xml(idic):
   indent(asigt)
   return asigt
 
-def create_soluct_xml(saioak): 
+def create_soluct_xml(saioak,teachers,ikasgaiak,buildings): 
   #print(saioak[saioak.keys()[0]])#FIXME ezabatu
   #print(saioak)
   soluct=ET.Element("SOLUCT")
@@ -321,7 +340,7 @@ def create_soluct_xml(saioak):
   return soluct
 
 
-def create_nomasigt_xml(asigc):   
+def create_nomasigt_xml(asigc,ikasgaiak):   
   nomasigt = ET.Element("NOMASIGT")
   ID = 0
   for key in asigc.keys():
@@ -336,7 +355,7 @@ def create_nomasigt_xml(asigc):
   return nomasigt
 
 
-def create_without_students_dict(teachersfile="teachers.xml"):
+def create_without_students_dict(teachers, ikasgaiak,egunak,orduak,teachersfile="teachers.xml"):
   tree=ET.parse(teachersfile)
   root=tree.getroot()
   #Ikaslerik gabeko jarduerak lortzeko.
@@ -348,6 +367,7 @@ def create_without_students_dict(teachersfile="teachers.xml"):
   d={}
   for irak in root.findall('.//Teacher'):
     irakizena=irak.get('name')
+    print(irakizena)
     if irakizena not in teachers.keys():
         print(irakizena)
         teachers[irakizena]['ABREV'] = input("ABREV: ")

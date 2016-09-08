@@ -17,8 +17,8 @@ from odf.text import P, H, List, ListItem
 from odf.table import Table, TableColumn, TableRow, TableCell
 from odf import table, text
 
-fileg = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/ordutegia/subgroups.xml"
-filet = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/ordutegia/teachers.xml"
+fileg = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/15-16/subgroups.xml"
+filet = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/15-16/teachers.xml"
 
 tree = ET.parse(fileg)     
 root = tree.getroot()
@@ -74,10 +74,10 @@ def print_odf(Matrix,name,textdoc,odtfile):
         p = P(stylename=tableheaders,text=eguna)
         tc.addElement(p)
     for hour in range(hours):
-        if hour == 3:
-            tr = table.TableRow()
-            t.addElement(tr)
-            continue
+        #if hour == 3:
+            #tr = table.TableRow()
+            #t.addElement(tr)
+            #continue
         tr = table.TableRow()
         t.addElement(tr)
         tc = table.TableCell(valuetype="string", stylename="Table")
@@ -182,5 +182,5 @@ def printmat(mat,verbose=False):
 
 groups = ['1-A','1-B','1-C','1-D','1-E','1-H','1-I','1-J','1-K','1-L','2-A','2-B','2-C','2-D','2-P','2-H','2-I','2-J','3-A','3-B','3-C','3-P','3-H','3-I','3-J','3-K','3-Q','4-A','4-B','4-C','4-D','4-H','4-I','4-J','4-K','4-L','5-A','5-B','5-H','5-I','5-J','6-A','6-B','6-H','6-I','6-J']
 #textdoc_init()
-findsg(groups)
+#findsg(groups)
 findt()
