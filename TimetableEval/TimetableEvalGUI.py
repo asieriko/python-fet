@@ -35,8 +35,8 @@ class Ui(QtWidgets.QMainWindow):
     def processdata(self):
         print("Process to: " + self.outcsvdir+self.name+".csv")
         tdic, sumdic, sumtotal = teachereval.evaluate(self.inputxmlf)
-        for key in sumdic.keys():
-            self.ui.tableWidget.setItem(int(key), 0, QtWidgets.QTableWidgetItem(str(sumdic[key])))
+        for i,key in enumerate(sumdic.keys()):
+            self.ui.tableWidget.setItem(int(i), 0, QtWidgets.QTableWidgetItem(str(sumdic[key])))
 
         try:
             file = self.outcsvdir+self.name+".csv"
