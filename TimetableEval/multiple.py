@@ -3,7 +3,7 @@ import json
 import teachereval
 from operator import itemgetter
 
-rootdir = "/home/asier/Horarios"
+rootdir = "/home/asier/Hezkuntza/python-hezkuntza/Asier-16-17/timetables/"
 
 def recev():
     l = []

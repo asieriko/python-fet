@@ -112,10 +112,14 @@ def findsg(groups,verbose=False):
                 for h in hs:
                     sub = h.findall(".//Subject")
                     room = h.findall(".//Room")
-                    if sub != [] and Matrix[j][i].count(sub[0].attrib['name']+' ('+room[0].attrib['name']+')')==0:
+                    if room != []:
+                        room = room[0].attrib['name']
+                    else:
+                        room = ''
+                    if sub != [] and Matrix[j][i].count(sub[0].attrib['name']+' ('+room+')')==0:
                         #print(d.attrib['name'],h.attrib['name'],sub[0].attrib['name'])
                         #print(i,j)
-                        Matrix[j][i].append(sub[0].attrib['name']+' ('+room[0].attrib['name']+')')
+                        Matrix[j][i].append(sub[0].attrib['name']+' ('+room+')')
                     j += 1
                 i += 1
         print(group)
@@ -150,12 +154,14 @@ def findt():
                 room = h.findall(".//Room")
                 stu = []
                 for st in stud:
-                    stu.append(st.attrib.get('name'))
+                    stu.append(st.attrib.get('name')[0]+st.attrib.get('name')[2])
+                if room != []:
+                        gela = room[0].attrib['name']
                 if sub != [] and Matrix[j][i].count(sub[0].attrib['name'])==0:
                     #print(d.attrib['name'],h.attrib['name'],sub[0].attrib['name'])
                     #print(i,j)
                     if stu != '' and sub[0].attrib['name'] != 'Zaintza' and sub[0].attrib['name'][:2] != 'MB':
-                        text = sub[0].attrib['name'] + ' (' + '-'.join(stu) + ')'
+                        text = sub[0].attrib['name'] + ' (' + '-'.join(stu) + ')/(' + gela + ')'
                     elif sub[0].attrib['name'] == 'Zaintza':
                         text = sub[0].attrib['name'] + ' (' + room[0].attrib['name'] + ')'
                     elif  sub[0].attrib['name'][:2] == 'MB':
@@ -182,5 +188,5 @@ def printmat(mat,verbose=False):
 
 groups = ['1-A','1-B','1-C','1-D','1-E','1-H','1-I','1-J','1-K','1-L','2-A','2-B','2-C','2-D','2-P','2-H','2-I','2-J','3-A','3-B','3-C','3-P','3-H','3-I','3-J','3-K','3-Q','4-A','4-B','4-C','4-D','4-H','4-I','4-J','4-K','4-L','5-A','5-B','5-H','5-I','5-J','6-A','6-B','6-H','6-I','6-J']
 #textdoc_init()
-#findsg(groups)
+findsg(groups)
 findt()
