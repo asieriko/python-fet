@@ -17,8 +17,8 @@ from odf.text import P, H, List, ListItem
 from odf.table import Table, TableColumn, TableRow, TableCell
 from odf import table, text
 
-fileg = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/15-16/subgroups.xml"
-filet = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/15-16/teachers.xml"
+fileg = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/ordutegia/subgroups.xml"
+filet = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/ordutegia/teachers.xml"
 
 tree = ET.parse(fileg)     
 root = tree.getroot()
@@ -86,7 +86,9 @@ def print_odf(Matrix,name,textdoc,odtfile):
         for day in range(5):
             tc = table.TableCell(valuetype="string", stylename="Table")
             tr.addElement(tc)
-            tc.addElement(text.P(text=' - '.join(Matrix[hour][day])))
+            for activity in Matrix[hour][day]:
+                tc.addElement(text.P(text=activity))
+            #tc.addElement(text.P(text=' - '.join(Matrix[hour][day])))
     textdoc.text.addElement(datatable)
     
 
@@ -175,6 +177,34 @@ def findt():
         print_odf(Matrix,group,textdoc,"ordutegia_irakasle.odt")
 
 
+def findzaintza():
+    teachers = root2.xpath(".//Teacher")
+    textdoc = createdoc()       
+    
+    w1, h1 = 5, 7
+    Matrix1 = [[[] for x in range(w1)] for y in range(h1)]
+    Matrix2 = [[[] for x in range(w1)] for y in range(h1)]
+    for s in teachers: 
+        teacher = s.attrib.get('name')
+        #print(s.attrib['name'])
+        ds = s.findall(".//Day")
+        i = 0
+        for d in ds:
+            hs = d.findall(".//Hour")
+            j = 0
+            for h in hs:
+                sub = h.findall(".//Subject")
+                room = h.findall(".//Room")
+                if room != [] and sub != [] and room[0].attrib['name'][-1] == "1" and sub[0].attrib['name'] == "Zaintza":
+                    Matrix1[j][i].append(teacher)
+                if room != [] and sub != [] and room[0].attrib['name'][-1] == "2" and sub[0].attrib['name'] == "Zaintza":
+                    Matrix2[j][i].append(teacher)
+                j += 1
+            i += 1
+    print_odf(Matrix1,"zaintza",textdoc,"ordutegia_zaintza.odt")
+    print_odf(Matrix2,"zaintza",textdoc,"ordutegia_zaintza.odt")
+
+
 def printmat(mat,verbose=False):
     h = len(mat)
     for j in range(h):
@@ -189,4 +219,5 @@ def printmat(mat,verbose=False):
 groups = ['1-A','1-B','1-C','1-D','1-E','1-H','1-I','1-J','1-K','1-L','2-A','2-B','2-C','2-D','2-P','2-H','2-I','2-J','3-A','3-B','3-C','3-P','3-H','3-I','3-J','3-K','3-Q','4-A','4-B','4-C','4-D','4-H','4-I','4-J','4-K','4-L','5-A','5-B','5-H','5-I','5-J','6-A','6-B','6-H','6-I','6-J']
 #textdoc_init()
 findsg(groups)
-findt()
+#findt()
+#findzaintza()
