@@ -91,26 +91,26 @@ def load_subjects_file(CSVfile="subjects.csv",interactive=False):
 def load_groups_rooms_file(egunak,orduak,xmlfile='subgroups.xml'):
   #in: fet's subgroups.xml file
   #out: dic {u'M\xaa \xc1ngeles Mar466A': {'Group': [u'6A'], 'Room': '6.A', 'Hour': 6, 'Teacher': u'M\xaa \xc1ngeles Mar', 'Day': 4, 'Subject': u'F\xedsica'}}
-  tree=ET.parse(xmlfile)
-  root=tree.getroot()
-  tgdic={}
+  tree = ET.parse(xmlfile)
+  root = tree.getroot()
+  tgdic = {}
   for sb in root.findall('.//Subgroup'):
-    sbg=sb.get('name')[0]+sb.get('name')[2]
+    sbg = sb.get('name')[0]+sb.get('name')[2]
     for eg in sb.findall('.//Day'):
-      eguna=egunak[eg.get('name')]
+      eguna = egunak[eg.get('name')]
       for ordu in eg.findall('.//Hour'):
-        ordua=orduak[ordu.get('name')]
+        ordua = orduak[ordu.get('name')]
         for teacher in ordu.findall('.//Teacher'):
           sub = ordu.find('.//Subject').get('name')
-          room=ordu.find('.//Room')
-          if room!=None:
-            room =room.get('name')
+          room = ordu.find('.//Room')
+          if room != None:
+            room = room.get('name')
           else:
-            room=""
-          key=teacher.get('name')+str(eguna)+str(ordua)+sbg#+sbg gabe, group=[1A,1B]
+            room = ""
+          key = teacher.get('name')+str(eguna)+str(ordua)+sbg#+sbg gabe, group=[1A,1B]
           if not key in tgdic.keys():
-            di={'Teacher':teacher.get('name'),'Subject':sub,'Day':eguna,'Hour':ordua,'Room':room,'Group':[sbg]}
-            tgdic[key]=di
+            di = {'Teacher':teacher.get('name'),'Subject':sub,'Day':eguna,'Hour':ordua,'Room':room,'Group':[sbg]}
+            tgdic[key] = di
           else:
             if not sbg in  tgdic[key]['Group']: tgdic[key]['Group'].append(sbg)
   return tgdic
@@ -137,11 +137,11 @@ def get_asigf_abrev(adic):
   subjects={}
   for k in adic.keys(): 
     if not adic[k]['Subject'] in subjects.keys():
-      iz=input("Ikagaia: ["+adic[k]['Subject']+"]:")
+      iz = input("Ikagaia: ["+adic[k]['Subject']+"]:")
       if iz != "": 
-        subjects[adic[k]['Subject']]={'ABREV':iz}
+        subjects[adic[k]['Subject']] = {'ABREV':iz}
       else:
-        subjects[adic[k]['Subject']]={'ABREV':adic[k]['Subject']}
+        subjects[adic[k]['Subject']] = {'ABREV':adic[k]['Subject']}
   return subjects
 
 
@@ -149,14 +149,14 @@ def get_asigf_abrev(adic):
 def extract_taldeak_from_groups(grdic):
   #in dic:u'M\xaa \xc1ngeles Mar466A': {'Group': [u'6A'], 'Room': '6.A', 'Hour': 6, 'Teacher': u'M\xaa \xc1ngeles Mar', 'Day': 4, 'Subject': u'F\xedsica'}}
   #out: {'5H': {'ABREV': '5H', 'GRUPO': '5.H', 'CURSO': '5'}}
-  gdic={}
+  gdic = {}
   for key in grdic.keys():
-    g={}
-    ga=grdic[key]['Group'][0]
-    g['ABREV']=ga
-    g['CURSO']=ga[0]
-    g['GRUPO']=ga[0]+"."+ga[1]
-    gdic[ga]=g
+    g = {}
+    ga = grdic[key]['Group'][0]
+    g['ABREV'] = ga
+    g['CURSO'] = ga[0]
+    g['GRUPO'] = ga[0]+"."+ga[1]
+    gdic[ga] = g
     
   return gdic
   
