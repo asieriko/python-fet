@@ -48,7 +48,7 @@ class Fet2EDUCA():
         'Uxue MacuaZaintza63': {'Teacher': 'Uxue Macua', 'Count': 1, 'Group': 'b', 'Room': '', 'Subject': 'Zaintza'},
         '''
         # It seems that all the info in adic is already in grdic
-        print(self.teachers)
+        #print(self.teachers)
         wsdic, zdic = self.create_without_students_dict(os.path.join(dir_path, "teachers.xml"))
         self.adic.update(wsdic)
         self.groups = self.extract_taldeak_from_groups()
@@ -80,7 +80,7 @@ class Fet2EDUCA():
         # FIXME: Uste dut ez dela erabiltzen...
         teachers = {}
         with open(CSVfile, 'rt') as csvfile:
-            reader = csv.reader(csvfile, delimiter=', ')
+            reader = csv.reader(csvfile, delimiter=',')
             for r in reader:
                 teacher = {}
                 if interactive:
@@ -98,7 +98,7 @@ class Fet2EDUCA():
         # FIXME: Uste dut ez dela erabiltzen...
         rooms = {}
         with open(CSVfile, 'rt') as csvfile:
-            reader = csv.reader(csvfile, delimiter=', ')
+            reader = csv.reader(csvfile, delimiter=',')
             for r in reader:
                 room = {}
                 room['EDIFICIO'] = r[2]
@@ -111,7 +111,7 @@ class Fet2EDUCA():
         # FIXME: Uste dut ez dela erabiltzen...
         subjects = {}
         with open(CSVfile, 'rt') as csvfile:
-            reader = csv.reader(csvfile, delimiter=', ')
+            reader = csv.reader(csvfile, delimiter=',')
             for r in reader:
                 subject = {}
                 subject['ABREV'] = r[2]
@@ -148,10 +148,16 @@ class Fet2EDUCA():
         return tgdic
 
     def extract_asigf_from_groups(self):
-        # in dic:u'M\xaa \xc1ngeles Mar466A': {'Group': [u'6A'], 'Room': '6.A', 'Hour': 6, 'Teacher': u'M\xaa \xc1ngeles Mar', 'Day': 4, 'Subject': u'F\xedsica'}}
-        # out: dic: { u'3KIbai Go\xf1iHiritartasuna3.JK': {'Count': 1, 'Room': '3.JK', 'Group': '3K', 'Teacher': u'Ibai Go\xf1i', 'Subject': 'Hiritartasuna'}}
+        ''' 
+        From a dic for each activity-hour, creates a new dict for each set-activity-group with the count of how many sessions are
+        in dic:u'M\xaa \xc1ngeles Mar466A': {'Group': [u'6A'], 'Room': '6.A', 'Hour': 6, 'Teacher': u'M\xaa \xc1ngeles Mar', 'Day': 4, 'Subject': u'F\xedsica'}}
+        out: dic: { u'3KIbai Go\xf1iHiritartasuna3.JK': {'Count': 1, 'Room': '3.JK', 'Group': '3K', 'Teacher': u'Ibai Go\xf1i', 'Subject': 'Hiritartasuna'}}
+        what happens when a set-of-activities are hold in different rooms? Does EDUCA use room information in ASIGF, I don't think so even if it allows up to 4 rooms
+        <ASIGF ID="1" ASIG="2NTP" AULA="201" AULA1="" AULA2="" AULA3="" AULA4="" EDIFICIO="2" GRUP="2H" NALUM="" PROF="BG01" TIPO="" HORASEM="3"/>
+        '''
         asigdic = {}
         for key in self.grdic.keys():
+            print(self.grdic[key])
             newkey = self.grdic[key]['Group'][0] + self.grdic[key]['Teacher'] + self.grdic[key]['Subject'] + self.grdic[key]['Room']
             if newkey not in asigdic.keys():
                 if self.grdic[key]['Group'][0][0] not in ['1', '2', '3', '4', '5', '6']:
@@ -163,6 +169,7 @@ class Fet2EDUCA():
                 asigdic[newkey] = ad
             else:
                 asigdic[newkey]['Count'] += 1
+            print(asigdic[newkey])
         return asigdic
 
     def get_asigf_abrev(self, adic):
@@ -270,8 +277,8 @@ class Fet2EDUCA():
         # out: educa's ASIGT element
         asigt = ET.Element("ASIGT")
         for ID, key in enumerate(self.adic.keys()):
-            if self.adic[key]['Room'] not in self.buildings.keys(): 
-                print(self.adic[key]['Room'])
+            # if self.adic[key]['Room'] not in self.buildings.keys():  
+            #    print(self.adic[key]['Room'])
             # self.buildings[self.adic[key]['Room']]='1'
             if self.adic[key]['Group'][0]=='b':  # FIXME: maybe =='b' isn't enough
                 grup = ""
@@ -317,7 +324,7 @@ class Fet2EDUCA():
             # print(key)
             # if not adic[k]['Subject'] in subjects.keys():
             #    iz=input("Ikagaia: ["+adic[k]['Subject']+"]:")
-            print(key, ": ", self.saioak[key]['Group'])
+            # print(key, ": ", self.saioak[key]['Group'])
             if self.saioak[key]['Group'] != ['']: 
                 cur = self.saioak[key]['Group'][0][0]
             else:
@@ -521,7 +528,7 @@ class Fet2EDUCA():
                     subject = d.get('name')[0:3] + "P"
                 else:
                     subject = d.get('name')[0:3]
-                print('ASIG='+year+d.get('name')[0:3] + ' GRUP=' + group)
+                print('ASIG=' + year + d.get('name')[0:3] + ' GRUP=' + group)
                 asigfall.append('ASIG=' + year + subject + ' GRUP=' + group)
         # Talde txikiak, talde normaltzat hartzen ditu, bihurtzen dudalako 2-k-p eta 2-k-h 2-k
         count = {}
