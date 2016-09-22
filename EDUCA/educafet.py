@@ -19,6 +19,7 @@ from itertools import chain
 class Fet2EDUCA():
 
     def generate_all(self):
+        self.DIV_GROUPS = ['2-P','2P','3-L','3L','3-D', '3D']
         dir_path = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/16-17-data/"
         self.teachers = self.load_teacher_file(os.path.join(dir_path, "irakasle.csv"))
         '''teachers
@@ -195,7 +196,7 @@ class Fet2EDUCA():
                 continue
             group['ABREV'] = ga
             group['CURSO'] = ga[0]
-            group['GRUPO'] = ga[0] + "." + ga[1]
+            group['GRUPO'] = ga[0] + "." + ga[1] #FIXME: If I want to create groupings al name must be considered
             groups[ga] = group
             
         return groups
@@ -257,13 +258,13 @@ class Fet2EDUCA():
                 nivel = 'BACH'
             else: 
                 nivel = ''
-            if self.groups[key]['GRUPO'][-1] in ['P', 'Q']:
+            if self.groups[key]['GRUPO'] in self.DIV_GROUPS:
                 nivel = 'DIV'  
             if key[0] != 'b': ET.SubElement(grupt, 'GRUPF',
                                     {'ABREV': self.groups[key]['ABREV'],
                                         'CURSO': self.groups[key]['CURSO'],
                                         'DESCRIP': '',
-                                        'GRUPO': self.groups[key]['GRUPO'][-1],
+                                        'GRUPO': self.groups[key]['GRUPO'][-1], #FIXME: If I want to create groupings all name must be considered
                                         'ID': str(ID),
                                         'MAXALUM': '0',
                                         'NIVEL': nivel,
