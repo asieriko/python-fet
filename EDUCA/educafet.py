@@ -127,7 +127,7 @@ class Fet2EDUCA():
         root = tree.getroot()
         tgdic = {}
         for subbgroup in root.findall('.//Subgroup'):
-            subbgroupname = subbgroup.get('name')[0] + subbgroup.get('name')[2]
+            subbgroupname = subbgroup.get('name')[0] + subbgroup.get('name')[2] #FIXME: All name remove from [0]
             for day in subbgroup.findall('.//Day'):
                 dayname = self.days[day.get('name')]
                 for hour in day.findall('.//Hour'):
@@ -162,7 +162,7 @@ class Fet2EDUCA():
             newkey = self.grdic[key]['Group'][0] + self.grdic[key]['Teacher'] + self.grdic[key]['Subject'] + self.grdic[key]['Room']
             if newkey not in asigdic.keys():
                 if self.grdic[key]['Group'][0][0] not in ['1', '2', '3', '4', '5', '6']:
-                    groupname = "NOGROUP"
+                    groupname = ""
                 else:
                     groupname = self.grdic[key]['Group'][0]
                 ad = {'Teacher': self.grdic[key]['Teacher'], 'Group': groupname, 'Subject': self.grdic[key]['Subject'], 
@@ -196,7 +196,7 @@ class Fet2EDUCA():
                 continue
             group['ABREV'] = ga
             group['CURSO'] = ga[0]
-            group['GRUPO'] = ga[0] + "." + ga[1] #FIXME: If I want to create groupings al name must be considered
+            group['GRUPO'] = ga#[0] + "." + ga[1] #FIXME: If I want to create groupings al name must be considered
             groups[ga] = group
             
         return groups
@@ -264,7 +264,7 @@ class Fet2EDUCA():
                                     {'ABREV': self.groups[key]['ABREV'],
                                         'CURSO': self.groups[key]['CURSO'],
                                         'DESCRIP': '',
-                                        'GRUPO': self.groups[key]['GRUPO'][-1], #FIXME: If I want to create groupings all name must be considered
+                                        'GRUPO': self.groups[key]['GRUPO'][-1], #FIXME: If I want to create groupings all name must be considered remove [-1]
                                         'ID': str(ID),
                                         'MAXALUM': '0',
                                         'NIVEL': nivel,
@@ -281,7 +281,8 @@ class Fet2EDUCA():
             # if self.adic[key]['Room'] not in self.buildings.keys():  
             #    print(self.adic[key]['Room'])
             # self.buildings[self.adic[key]['Room']]='1'
-            if self.adic[key]['Group'][0]=='b':  # FIXME: maybe =='b' isn't enough
+            print(self.adic[key],self.adic[key]['Group'])
+            if self.adic[key]['Group'] != '' and self.adic[key]['Group'][0]=='b':  # FIXME: maybe =='b' isn't enough
                 grup = ""
             else:
                 grup = self.adic[key]['Group']
@@ -331,7 +332,7 @@ class Fet2EDUCA():
             else:
                 cur = ""
             if self.saioak[key]['Group'] != ['']: 
-                grup = self.saioak[key]['Group'][0][1]
+                grup = self.saioak[key]['Group'][0][1]  # FIXME: All name  remove [1]
             else:
                 grup = "" 
             if cur <= '4':
@@ -340,7 +341,7 @@ class Fet2EDUCA():
                 nivel = 'BACH'
             else:
                 nivel = ''
-            if grup in ['P', 'Q']:
+            if grup in ['2-P','3-D', '3-L']:
                 nivel = 'DIV'
             if self.saioak[key]['Group'] != [''] and self.saioak[key]['Group'][0][0] in ['1', '2', '3', '4', '5', '6']:
                 cgrup = self.saioak[key]['Group'][0]
@@ -420,7 +421,7 @@ class Fet2EDUCA():
                                 self.subjects[subjects[0].get('name')] = {'ABREV': iz}
                             else:
                                 self.subjects[subjects[0].get('name')] = {'ABREV': subjects[0].get('name')}	    
-                        t[teachername + subjects[0].get('name') + str(hour) + str(eguna)] = {'Teacher': teachername, 'Subject': subjects[0].get('name'), 'Room': "", 'Group': "NOGROUP", 'Count': 1}
+                        t[teachername + subjects[0].get('name') + str(hour) + str(eguna)] = {'Teacher': teachername, 'Subject': subjects[0].get('name'), 'Room': "", 'Group': "", 'Count': 1}
                         d[teachername + subjects[0].get('name') + str(hour) + str(eguna)] = {'Teacher': teachername, 'Subject': subjects[0].get('name'), 'Room': room, 'Group': [""], 'Day': eguna, 'Hour': hour}
         return t, d
 

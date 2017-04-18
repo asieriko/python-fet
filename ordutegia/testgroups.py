@@ -1,13 +1,9 @@
 #!/usr/bin/python
-import sys, getopt
+import sys, getopt, os
 import csv
-
-from lxml import etree as ET
-
-
-
 import time
 import xml.dom.minidom
+from lxml import etree as ET
 #from xml.etree import ElementTree as ET
 from datetime import datetime
 from itertools import chain
@@ -17,33 +13,6 @@ from odf.text import P, H, List, ListItem
 from odf.table import Table, TableColumn, TableRow, TableCell
 from odf import table, text
 
-fileg = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/ordutegia/subgroups.xml"
-filet = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/ordutegia/teachers.xml"
-
-tree = ET.parse(fileg)     
-root = tree.getroot()
-
-tree2 = ET.parse(filet)     
-root2 = tree2.getroot()
-
-orduak = ['08:30-9:25','09:25-10:20','10:20-11:15', '11:15-11:45','11:45-12:40','12:40-13:35', '13:35-14:30','14:30-15:20']
-
-
-h1style = Style(name="Heading 1",  family="paragraph",parentstylename="Heading 1")
-h1style.addElement(GraphicProperties(fill="solid",fillcolor="#e6e6ff"))
-h1style.addElement(TextProperties(attributes={'fontsize':"14pt",'fontweight':"bold",'color':"#000099" }))
-h1style.addElement(ParagraphProperties(breakbefore="page",margintop="0.4cm",marginbottom="0.2cm",backgroundcolor="#e6e6ff",padding="0.05cm",borderleft="none",borderright="none",bordertop="none",borderbottom="2.01pt solid #000099",shadow="none"))
-
-# Create a style for the paragraph with page-break
-withbreak = Style(name="WithBreak", parentstylename="Standard", family="paragraph")
-withbreak.addElement(ParagraphProperties(breakbefore="page"))
-
-TAB_style = Style(name="Table", family="table-cell")
-TAB_style.addElement(TableCellProperties(border="0.05pt solid #000000"))
-
-tableheaders = Style(name="Table Headers", family="paragraph", parentstylename="Standard")
-tableheaders.addElement(ParagraphProperties(numberlines="false", linenumber="0",textalign="center",margintop="0.2cm",marginbottom="0.2cm"))
-tableheaders.addElement(TextProperties(attributes={'fontsize':"12pt",'fontweight':"bold"}))
 
 def createdoc():
     
@@ -95,7 +64,7 @@ def print_odf(Matrix,name,textdoc,odtfile):
     textdoc.save(odtfile)
 
 
-def findsg(groups,verbose=False):
+def findsg(groups,lang,trans,verbose=False):
     textdoc = createdoc()            
     p = text.P(text=u'Horarios por grupos')
     textdoc.text.addElement(p)
@@ -118,10 +87,14 @@ def findsg(groups,verbose=False):
                         room = room[0].attrib['name']
                     else:
                         room = ''
-                    if sub != [] and Matrix[j][i].count(sub[0].attrib['name']+' ('+room+')')==0:
-                        #print(d.attrib['name'],h.attrib['name'],sub[0].attrib['name'])
+                    if sub != []:
+                        name = sub[0].attrib['name']
+                        if lang == 'es' and name in trans.keys():
+                            name = trans[name]                        
+                    if sub != [] and Matrix[j][i].count(name+' ('+room+')')==0:
+                        #print(d.attrib['name'],h.attrib['name'],name)
                         #print(i,j)
-                        Matrix[j][i].append(sub[0].attrib['name']+' ('+room+')')
+                        Matrix[j][i].append(name+' ('+room+')')
                     j += 1
                 i += 1
         print(group)
@@ -133,7 +106,7 @@ def findsg(groups,verbose=False):
         print_odf(Matrix,group,textdoc,"ordutegia_ikasle.odt")
 
 
-def findt():
+def findt(lang,trans):
     teachers = root2.xpath(".//Teacher")
     textdoc = createdoc()       
     #p = text.P(text=u'Horarios por profesores')
@@ -159,17 +132,21 @@ def findt():
                     stu.append(st.attrib.get('name')[0]+st.attrib.get('name')[2])
                 if room != []:
                         gela = room[0].attrib['name']
-                if sub != [] and Matrix[j][i].count(sub[0].attrib['name'])==0:
-                    #print(d.attrib['name'],h.attrib['name'],sub[0].attrib['name'])
+                if sub != []:
+                    name = sub[0].attrib['name']
+                    if lang == 'es' and name in trans.keys():
+                        name = trans[name]
+                if sub != [] and Matrix[j][i].count(name)==0:
+                    #print(d.attrib['name'],h.attrib['name'],name)
                     #print(i,j)
-                    if stu != '' and sub[0].attrib['name'] != 'Zaintza' and sub[0].attrib['name'][:2] != 'MB':
-                        text = sub[0].attrib['name'] + ' (' + '-'.join(stu) + ')/(' + gela + ')'
-                    elif sub[0].attrib['name'] == 'Zaintza':
-                        text = sub[0].attrib['name'] + ' (' + room[0].attrib['name'] + ')'
-                    elif  sub[0].attrib['name'][:2] == 'MB':
-                        text = sub[0].attrib['name'] + ' (' + room[0].attrib['name'][0] + ')'
+                    if stu != '' and name != 'Zaintza' and name[:2] != 'MB':
+                        text = name + ' (' + '-'.join(stu) + ')/(' + gela + ')'
+                    elif name == 'Zaintza':
+                        text = name + ' (' + room[0].attrib['name'] + ')'
+                    elif  name[:2] == 'MB':
+                        text = name + ' (' + room[0].attrib['name'][0] + ')'
                     else:
-                        text = sub[0].attrib['name']
+                        text = name
                     Matrix[j][i].append(text)
                 j += 1
             i += 1
@@ -215,9 +192,50 @@ def printmat(mat,verbose=False):
                 print(mat[j][i],end="\t")
         if verbose: print()
 
+def loadtranslations(incsvfile):
+    trans = {}
+    with open(incsvfile, newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',')
+        for row in spamreader:
+            trans[row[0]] = row[1]
+    return trans
 
-groups = ['1-A','1-B','1-C','1-D','1-E','1-H','1-I','1-J','1-K','1-L','2-A','2-B','2-C','2-D','2-P','2-H','2-I','2-J','3-A','3-B','3-C','3-P','3-H','3-I','3-J','3-K','3-Q','4-A','4-B','4-C','4-D','4-H','4-I','4-J','4-K','4-L','5-A','5-B','5-H','5-I','5-J','6-A','6-B','6-H','6-I','6-J']
-#textdoc_init()
-findsg(groups)
-#findt()
-#findzaintza()
+
+h1style = Style(name="Heading 1",  family="paragraph",parentstylename="Heading 1")
+h1style.addElement(GraphicProperties(fill="solid",fillcolor="#e6e6ff"))
+h1style.addElement(TextProperties(attributes={'fontsize':"14pt",'fontweight':"bold",'color':"#000099" }))
+h1style.addElement(ParagraphProperties(breakbefore="page",margintop="0.4cm",marginbottom="0.2cm",backgroundcolor="#e6e6ff",padding="0.05cm",borderleft="none",borderright="none",bordertop="none",borderbottom="2.01pt solid #000099",shadow="none"))
+
+# Create a style for the paragraph with page-break
+withbreak = Style(name="WithBreak", parentstylename="Standard", family="paragraph")
+withbreak.addElement(ParagraphProperties(breakbefore="page"))
+
+TAB_style = Style(name="Table", family="table-cell")
+TAB_style.addElement(TableCellProperties(border="0.05pt solid #000000"))
+
+tableheaders = Style(name="Table Headers", family="paragraph", parentstylename="Standard")
+tableheaders.addElement(ParagraphProperties(numberlines="false", linenumber="0",textalign="center",margintop="0.2cm",marginbottom="0.2cm"))
+tableheaders.addElement(TextProperties(attributes={'fontsize':"12pt",'fontweight':"bold"}))
+
+
+
+
+groups = ['1-A','1-B','1-C','1-D','1-E','1-H','1-I','1-J','1-K','1-L','2-A','2-B','2-C','2-D','2-P','2-H','2-I','2-J','3-A','3-B','3-C','3-D','3-H','3-I','3-J','3-K','3-L','4-A','4-B','4-C','4-D','4-H','4-I','4-J','4-K','4-L','5-A','5-B','5-H','5-I','5-J','6-A','6-B','6-H','6-I','6-J']
+
+lang = 'es'
+path = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/16-17-data/"
+
+fileg = os.path.join(path,"subgroups.xml")
+filet = os.path.join(path,"teachers.xml")
+trans = loadtranslations(os.path.join(path,"itzulpena.csv"))
+
+tree = ET.parse(fileg)     
+root = tree.getroot()
+tree2 = ET.parse(filet)     
+root2 = tree2.getroot()
+
+orduak = ['08:30-9:25','09:25-10:20','10:20-11:15', '11:15-11:45','11:45-12:40','12:40-13:35', '13:35-14:30','14:30-15:20']
+
+findsg(groups,lang,trans)
+findt(lang,trans)
+findzaintza()
