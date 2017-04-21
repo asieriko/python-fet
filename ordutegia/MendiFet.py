@@ -757,8 +757,9 @@ class MendiFet:
         if int(activities[0][self.totalduration]) > 1:
             if len(activities) > 1:
                 TimeConstraintElement.append(self.generate_min_days(Id, activities[0][self.totalduration]))  # ?
-        for a in self.generate_start_time(Id, len(activities), int(activities[0][self.totalduration])):
-            TimeConstraintElement.append(a)
+          #FIXME: Next two lines maybe are not needed, as new subgroups are exclusive
+#         for a in self.generate_start_time(Id, len(activities), int(activities[0][self.totalduration])):
+#             TimeConstraintElement.append(a)
         SpaceConstraintElement = self.fetxml.find('./Space_Constraints_List')
         # Generate Activities  
         ActivitiesElement = self.fetxml.find('./Activities_List')
@@ -1312,6 +1313,13 @@ class MendiFet:
             RoomName.text = room
             RoomBuilding = ET.SubElement(Room, "Building")
             RoomBuilding.text = self.roombuilding[room]
+            
+        for room in list(set([b.text for b in self.fetxml.findall('.//ConstraintActivityPreferredRooms/Preferred_Room')])):  # Eraikinak  -list(set([a.text for a in self.xmlfile.findall('./Room/Name')]))
+            Room = ET.SubElement(RoomsList, "Room")
+            RoomName = ET.SubElement(Room, "Name")
+            RoomName.text = room
+            RoomBuilding = ET.SubElement(Room, "Building")
+            RoomBuilding.text = room[-1]
 
     def generate_buildings_from_rooms(self):
         """
@@ -1363,6 +1371,7 @@ class MendiFet:
         indep = []
         bilera = []
         lag = []
+        zaintzak = []
         
     
         sg = self.generatesubgroups(self.raw_data)
@@ -1392,14 +1401,61 @@ class MendiFet:
                 lag.append([activity[self.teacher], activity[self.subject], activity[self.year], activity[self.group], activity[self.totalduration], activity[self.room], activity[self.con]])
             if activity[self.contype] == "independiente":
                 indep.append(activity)
+            if activity[self.contype] == "zaintza":
+                zaintzak.append(activity)
                 
         haug = self.generate_all_option_groups(self.generate_hautazkoak(haut))
         ind = self.generate_all_independent_activities(indep)
         bil = self.generate_all_meetings(self.generate_meetings_groups(bilera))
         lagun = self.generate_all_laguntza(self.generate_laguntza_groups(lag))
+        zain = self.generate_guard_activity(zaintzak)
         # print(lg)
         # print(haut)
         # print(bil)
+    def generate_guard_activity(self,zaintzak):
+                
+        Id = self.max_activity_id()
+        bulding1guards = 5
+        bulding2guards = 5
+        
+        ActivitiesElement = self.fetxml.find('./Activities_List')
+        SpaceConstraintElement = self.fetxml.find('./Space_Constraints_List')
+       
+        for zaintza in zaintzak:
+            for i in range(int(zaintza[self.totalduration])):
+                ActivitiesElement.append(self.generate_activity(zaintza, Id, Id, 1))
+                
+                RoomConstraintElement = ET.Element('ConstraintActivityPreferredRooms')
+                WPerElement = ET.SubElement(RoomConstraintElement,'Weight_Percentage')
+                WPerElement.text = "100"
+                ActIdElement = ET.SubElement(RoomConstraintElement,'Activity_Id')
+                ActIdElement.text = str(Id)
+                NPerElement = ET.SubElement(RoomConstraintElement,'Number_of_Preferred_Rooms')
+                ActiveRElement = ET.SubElement(RoomConstraintElement,'Active')
+                ActiveRElement.text = "true"
+                ComRElement = ET.SubElement(RoomConstraintElement,'Comments')
+                #FIXME: Something more generic, configurable with number of guards and multiple buildins
+                if zaintza[self.building] == '1':               
+                    NPerElement.text = str(bulding1guards)
+                    for i in range(bulding1guards):
+                        PRElement = ET.SubElement(RoomConstraintElement,'Preferred_Room')
+                        PRElement.text = "Z"+str(i+1)+"-1"
+                elif zaintza[self.building] == '2':
+                    NPerElement.text = str(bulding2guards)
+                    for i in range(bulding2guards):
+                        PRElement = ET.SubElement(RoomConstraintElement,'Preferred_Room')
+                        PRElement.text = "Z"+str(i+1)+"-2"
+                elif zaintza[self.building] == '12':
+                    NPerElement.text = str(bulding1guards + bulding2guards)
+                    for i in range(bulding1guards):
+                        PRElement = ET.SubElement(RoomConstraintElement,'Preferred_Room')
+                        PRElement.text = "Z"+str(i+1)+"-1"
+                    for i in range(bulding2guards):
+                        PRElement = ET.SubElement(RoomConstraintElement,'Preferred_Room')
+                        PRElement.text = "Z"+str(i+1)+"-2"
+                        
+                SpaceConstraintElement.append(RoomConstraintElement)
+                Id = Id + 1
         
     def generatesubgroups(self,activities):
         '''

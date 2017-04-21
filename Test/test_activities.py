@@ -65,6 +65,38 @@ class TestMendiFet(unittest.TestCase):
         ot = ET.tostring(mf.fetxml)
         self.assertEqual(rt,ot)
         
+    def test_generate_simultaneous_activities_exclusive_duration1(self):
+        mf = MendiFet()
+        mf.teacher = 0
+        mf.subject = 1
+        mf.group = 3
+        mf.totalduration = 4
+        mf.room = 5
+        mf.con = 6
+        mf.contype = 7
+        mf.fetxml = ET.fromstring("<fet><Time_Constraints_List/><Space_Constraints_List/><Activities_List/></fet>")
+        rt = b'<fet><Time_Constraints_List /><Space_Constraints_List><ConstraintActivityPreferredRoom><Weight_Percentage>100</Weight_Percentage><Activity_Id>1</Activity_Id><Room>Room1</Room><Permanently_Locked>true</Permanently_Locked><Active>true</Active><Comments> </Comments></ConstraintActivityPreferredRoom><ConstraintActivityPreferredRoom><Weight_Percentage>100</Weight_Percentage><Activity_Id>2</Activity_Id><Room>Room2</Room><Permanently_Locked>true</Permanently_Locked><Active>true</Active><Comments> </Comments></ConstraintActivityPreferredRoom></Space_Constraints_List><Activities_List><Activity><Teacher>Teacher1</Teacher><Subject>Subject</Subject><Students>Group1</Students><Duration>1</Duration><Total_Duration>1</Total_Duration><Id>1</Id><Activity_Group_Id>1</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity><Activity><Teacher>Teacher2</Teacher><Subject>Subject</Subject><Students>Group2</Students><Duration>1</Duration><Total_Duration>1</Total_Duration><Id>2</Id><Activity_Group_Id>2</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity></Activities_List></fet>'
+        activities= [["Teacher1","Subject","Year",["Group1"],1,"Room1","Building","Conexion","ConType"],["Teacher2","Subject","Year",["Group2"],1,"Room2","Building","Conexion","ConType"]]
+        mf.generate_simultaneous_activities(activities, 1)
+        ot = ET.tostring(mf.fetxml)
+        self.assertEqual(rt,ot)
+
+    def test_generate_simultaneous_activities_exclusive_duration2(self):
+        mf = MendiFet()
+        mf.teacher = 0
+        mf.subject = 1
+        mf.group = 3
+        mf.totalduration = 4
+        mf.room = 5
+        mf.con = 6
+        mf.contype = 7
+        mf.fetxml = ET.fromstring("<fet><Time_Constraints_List/><Space_Constraints_List/><Activities_List/></fet>")
+        rt = b'<fet><Time_Constraints_List><ConstraintMinDaysBetweenActivities><Weight_Percentage>100</Weight_Percentage><Consecutive_If_Same_Day>true</Consecutive_If_Same_Day><Number_of_Activities>2</Number_of_Activities><Activity_Id>1</Activity_Id><Activity_Id>2</Activity_Id><MinDays>1</MinDays><Active>true</Active><Comments> </Comments></ConstraintMinDaysBetweenActivities></Time_Constraints_List><Space_Constraints_List><ConstraintActivityPreferredRoom><Weight_Percentage>100</Weight_Percentage><Activity_Id>1</Activity_Id><Room>Room1</Room><Permanently_Locked>true</Permanently_Locked><Active>true</Active><Comments> </Comments></ConstraintActivityPreferredRoom><ConstraintActivityPreferredRoom><Weight_Percentage>100</Weight_Percentage><Activity_Id>2</Activity_Id><Room>Room1</Room><Permanently_Locked>true</Permanently_Locked><Active>true</Active><Comments> </Comments></ConstraintActivityPreferredRoom><ConstraintActivityPreferredRoom><Weight_Percentage>100</Weight_Percentage><Activity_Id>3</Activity_Id><Room>Room2</Room><Permanently_Locked>true</Permanently_Locked><Active>true</Active><Comments> </Comments></ConstraintActivityPreferredRoom><ConstraintActivityPreferredRoom><Weight_Percentage>100</Weight_Percentage><Activity_Id>4</Activity_Id><Room>Room2</Room><Permanently_Locked>true</Permanently_Locked><Active>true</Active><Comments> </Comments></ConstraintActivityPreferredRoom></Space_Constraints_List><Activities_List><Activity><Teacher>Teacher1</Teacher><Subject>Subject</Subject><Students>Group1</Students><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>1</Id><Activity_Group_Id>1</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity><Activity><Teacher>Teacher1</Teacher><Subject>Subject</Subject><Students>Group1</Students><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>2</Id><Activity_Group_Id>1</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity><Activity><Teacher>Teacher2</Teacher><Subject>Subject</Subject><Students>Group2</Students><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>3</Id><Activity_Group_Id>3</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity><Activity><Teacher>Teacher2</Teacher><Subject>Subject</Subject><Students>Group2</Students><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>4</Id><Activity_Group_Id>3</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity></Activities_List></fet>'
+        activities= [["Teacher1","Subject","Year",["Group1"],2,"Room1","Building","Conexion","ConType"],["Teacher2","Subject","Year",["Group2"],2,"Room2","Building","Conexion","ConType"]]
+        mf.generate_simultaneous_activities(activities, 1)
+        ot = ET.tostring(mf.fetxml)
+        self.assertEqual(rt,ot)
+        
     def test_generate_independent_activities_duration1(self):
         mf = MendiFet()
         mf.teacher = 0
