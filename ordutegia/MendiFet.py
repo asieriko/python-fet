@@ -1509,7 +1509,7 @@ class MendiFet:
         '''
         con = defaultdict(list)
         for activity in activities:
-            if (activity[self.con] != '') and (activity[self.contype] != 'bilera'):
+            if (activity[self.con] != '') and (activity[self.contype] not in  ['bilera','zaintza']):
                 if any(activity[self.subject] in i[self.subject] for i in  con[activity[self.con]]):
                     raise NameError("Same subject ({}) in a connection ({})".format(activity[self.subject],activity[self.con]))
                     #If this is not checked you get duplicates, for grupos pequeños...

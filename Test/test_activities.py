@@ -257,6 +257,24 @@ class TestMendiFet(unittest.TestCase):
         ot = ET.tostring(mf.generate_activity(activity, 1, 1, duration='1'))
         self.assertEqual(rt,ot)
         
+    def test_generate_guard_activity(self):
+        mf = MendiFet()
+        mf.teacher = 0
+        mf.subject = 1
+        mf.year = 2
+        mf.group = 3
+        mf.totalduration = 4
+        mf.room = 5
+        mf.building = 6
+        mf.con = 7
+        mf.contype = 8
+        mf.fetxml = ET.fromstring("<fet><Time_Constraints_List/><Space_Constraints_List/><Activities_List/></fet>")
+        zaintzak = [['Teacher4', 'zaintza', 'z', [], '2', '', '2', '', 'zaintza'], ['Teacher6', 'zaintza', 'z', [], '2', '', '1', '', 'zaintza'], ['Teacher3', 'zaintza', 'z', [], '2', '', '2', '', 'zaintza']]
+        rt = b'<fet><Time_Constraints_List /><Space_Constraints_List><ConstraintActivityPreferredRooms><Weight_Percentage>100</Weight_Percentage><Activity_Id>1</Activity_Id><Number_of_Preferred_Rooms>5</Number_of_Preferred_Rooms><Active>true</Active><Comments /><Preferred_Room>Z1-2</Preferred_Room><Preferred_Room>Z2-2</Preferred_Room><Preferred_Room>Z3-2</Preferred_Room><Preferred_Room>Z4-2</Preferred_Room><Preferred_Room>Z5-2</Preferred_Room></ConstraintActivityPreferredRooms><ConstraintActivityPreferredRooms><Weight_Percentage>100</Weight_Percentage><Activity_Id>2</Activity_Id><Number_of_Preferred_Rooms>5</Number_of_Preferred_Rooms><Active>true</Active><Comments /><Preferred_Room>Z1-2</Preferred_Room><Preferred_Room>Z2-2</Preferred_Room><Preferred_Room>Z3-2</Preferred_Room><Preferred_Room>Z4-2</Preferred_Room><Preferred_Room>Z5-2</Preferred_Room></ConstraintActivityPreferredRooms><ConstraintActivityPreferredRooms><Weight_Percentage>100</Weight_Percentage><Activity_Id>3</Activity_Id><Number_of_Preferred_Rooms>5</Number_of_Preferred_Rooms><Active>true</Active><Comments /><Preferred_Room>Z1-1</Preferred_Room><Preferred_Room>Z2-1</Preferred_Room><Preferred_Room>Z3-1</Preferred_Room><Preferred_Room>Z4-1</Preferred_Room><Preferred_Room>Z5-1</Preferred_Room></ConstraintActivityPreferredRooms><ConstraintActivityPreferredRooms><Weight_Percentage>100</Weight_Percentage><Activity_Id>4</Activity_Id><Number_of_Preferred_Rooms>5</Number_of_Preferred_Rooms><Active>true</Active><Comments /><Preferred_Room>Z1-1</Preferred_Room><Preferred_Room>Z2-1</Preferred_Room><Preferred_Room>Z3-1</Preferred_Room><Preferred_Room>Z4-1</Preferred_Room><Preferred_Room>Z5-1</Preferred_Room></ConstraintActivityPreferredRooms><ConstraintActivityPreferredRooms><Weight_Percentage>100</Weight_Percentage><Activity_Id>5</Activity_Id><Number_of_Preferred_Rooms>5</Number_of_Preferred_Rooms><Active>true</Active><Comments /><Preferred_Room>Z1-2</Preferred_Room><Preferred_Room>Z2-2</Preferred_Room><Preferred_Room>Z3-2</Preferred_Room><Preferred_Room>Z4-2</Preferred_Room><Preferred_Room>Z5-2</Preferred_Room></ConstraintActivityPreferredRooms><ConstraintActivityPreferredRooms><Weight_Percentage>100</Weight_Percentage><Activity_Id>6</Activity_Id><Number_of_Preferred_Rooms>5</Number_of_Preferred_Rooms><Active>true</Active><Comments /><Preferred_Room>Z1-2</Preferred_Room><Preferred_Room>Z2-2</Preferred_Room><Preferred_Room>Z3-2</Preferred_Room><Preferred_Room>Z4-2</Preferred_Room><Preferred_Room>Z5-2</Preferred_Room></ConstraintActivityPreferredRooms></Space_Constraints_List><Activities_List><Activity><Teacher>Teacher4</Teacher><Subject>zaintza</Subject><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>1</Id><Activity_Group_Id>1</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity><Activity><Teacher>Teacher4</Teacher><Subject>zaintza</Subject><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>2</Id><Activity_Group_Id>2</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity><Activity><Teacher>Teacher6</Teacher><Subject>zaintza</Subject><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>3</Id><Activity_Group_Id>3</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity><Activity><Teacher>Teacher6</Teacher><Subject>zaintza</Subject><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>4</Id><Activity_Group_Id>4</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity><Activity><Teacher>Teacher3</Teacher><Subject>zaintza</Subject><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>5</Id><Activity_Group_Id>5</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity><Activity><Teacher>Teacher3</Teacher><Subject>zaintza</Subject><Duration>1</Duration><Total_Duration>2</Total_Duration><Id>6</Id><Activity_Group_Id>6</Activity_Group_Id><Active>true</Active><Comments> </Comments></Activity></Activities_List></fet>'
+        mf.generate_guard_activity(zaintzak)
+        ot = ET.tostring(mf.fetxml)
+        self.assertEqual(rt, ot)
+        
         
 if __name__ == '__main__':
     unittest.main()
