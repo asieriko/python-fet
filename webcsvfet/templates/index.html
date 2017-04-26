@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+    <html lang="es">
+        <head>
+            <title>Conversor de .csv a .fet</title>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        </head>
+        <body>
+            <div class="jumbotron">
+                <h1>Sube un archivo *.csv</h1>
+            </div>
+            {% with messages = get_flashed_messages() %}
+			  {% if messages %}
+			    <ul class=flashes>
+			    {% for message in messages %}
+			      <li>{{ message }}</li>
+			    {% endfor %}
+			    </ul>
+			  {% endif %}
+			{% endwith %}
+            <form action="" method=post enctype=multipart/form-data>
+                <div class="row">
+                        <div class="col-md-4"><input class="form-control" type=file name=file></div>
+                        <div class="col-md-4"><input class="btn btn-default" type=submit value=Upload></div>
+                        <div class="col-md-4"></div>
+                    </div>
+                    
+            </form>
+            <h1>Parámetros</h1>
+            <ul>
+            <li>Izena: Nombre del profesor</li>
+            <li>Ikasgaia: Nombre de la asignatura</li>
+            <li>Maila: Curso del grupo</li>
+            <li>Taldea: Nombre del grupo o grupos, en formato númeroletra(s)</li>
+            <li>Orduak: Número de horas de la asignatura</li>
+            <li>Gela: Aula en la que se imparte</li>
+            <li>Eraikina: Edificio del aula</li>
+            <li>Konexion: En esta columna hay que poner el mismo identificador a las asignaturas que se tengan que impartir a la vez</li>
+            <li>Mota: Es el tipo de asignatura:
+            <ul>
+            <li>Independiente: Asignatura normal que no está relacionada con ninguna</li>
+            <li>h: Asignatura que va conectada con otras a la misma hora</li>
+            <li>bilera: Reunión (varios profesores sin alumnos)</li>
+            <li>zaintza: guardia. En este caso la asignatura también será zaintza y el número de horas indicará cuantas guardias hay que hacer</li>
+            </ul>
+            </li>
+            </ul>
+            <h1>Ejemplo</h1>
+            <table border="0" cellspacing="0" cellpadding="0" class="ta1">
+    <colgroup>
+        <col width="75" />
+        <col width="101" />
+        <col width="51" />
+        <col width="57" />
+        <col width="64" />
+        <col width="46" />
+        <col width="70" />
+        <col width="79" />
+        <col width="110" />
+    </colgroup>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Izena</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>Ikasgaia</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>Maila</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default">
+            <p>Taldea</p>
+        </td>
+        <td style="text-align:left;width:14.69mm; " class="Default">
+            <p>Orduak</p>
+        </td>
+        <td style="text-align:left;width:10.55mm; " class="Default">
+            <p>Gela</p>
+        </td>
+        <td style="text-align:left;width:16.09mm; " class="Default">
+            <p>Eraikina</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default">
+            <p>Konexion</p>
+        </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>Mota</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher9</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>Subject9</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>1DBH</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default">
+            <p>1J</p>
+        </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:right; width:10.55mm; " class="Default">
+            <p>3</p>
+        </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default"> </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>independiente</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher6</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>Subject10_1</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>1DBH</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default">
+            <p>1H</p>
+        </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>5</p>
+        </td>
+        <td style="text-align:right; width:10.55mm; " class="Default">
+            <p>1</p>
+        </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default">
+            <p>C</p>
+        </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>h</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher8</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>Subject10_2</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>1DBH</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default">
+            <p>1HI</p>
+        </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>5</p>
+        </td>
+        <td style="text-align:right; width:10.55mm; " class="Default">
+            <p>4</p>
+        </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default">
+            <p>C</p>
+        </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>h</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher9</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>Subject10_3</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>1DBH</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default">
+            <p>1I</p>
+        </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>5</p>
+        </td>
+        <td style="text-align:right; width:10.55mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default">
+            <p>C</p>
+        </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>h</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher8</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>Subject10</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>1DBH</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default">
+            <p>1J</p>
+        </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>5</p>
+        </td>
+        <td style="text-align:right; width:10.55mm; " class="Default">
+            <p>3</p>
+        </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default"> </td>
+        <td style="text-align:left; width:25.21mm; " class="Default">
+            <p>independiente</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher1</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>MB</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>B</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default"> </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>1</p>
+        </td>
+        <td style="text-align:right; width:10.55mm; " class="Default">
+            <p>7</p>
+        </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default">
+            <p>R</p>
+        </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>bilera</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher2</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>MB</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>B</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default"> </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>1</p>
+        </td>
+        <td style="text-align:right; width:10.55mm; " class="Default">
+            <p>7</p>
+        </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default">
+            <p>R</p>
+        </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>bilera</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher3</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>MB</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>B</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default"> </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>1</p>
+        </td>
+        <td style="text-align:right; width:10.55mm; " class="Default">
+            <p>7</p>
+        </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default">
+            <p>R</p>
+        </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>bilera</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher4</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>MB</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>B</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default"> </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>1</p>
+        </td>
+        <td style="text-align:right; width:10.55mm; " class="Default">
+            <p>7</p>
+        </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default">
+            <p>R</p>
+        </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>bilera</p>
+        </td>
+    </tr>
+    <tr class="ro1">
+        <td style="text-align:left;width:17.2mm; " class="Default">
+            <p>Teacher4</p>
+        </td>
+        <td style="text-align:left;width:23mm; " class="Default">
+            <p>zaintza</p>
+        </td>
+        <td style="text-align:left;width:11.66mm; " class="Default">
+            <p>z</p>
+        </td>
+        <td style="text-align:left;width:13.04mm; " class="Default"> </td>
+        <td style="text-align:right; width:14.69mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:10.55mm; " class="Default"> </td>
+        <td style="text-align:right; width:16.09mm; " class="Default">
+            <p>2</p>
+        </td>
+        <td style="text-align:left;width:18.03mm; " class="Default"> </td>
+        <td style="text-align:left;width:25.21mm; " class="Default">
+            <p>zaintza</p>
+        </td>
+    </tr>
+</table>
+        </body>
+    </html>
