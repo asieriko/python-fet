@@ -65,7 +65,29 @@ class MendiFet:
         self.buildings = set()
         
         self.roombuilding = {}
-    
+        
+        #FIXME: the function can check if the subjects ends with a number to avoid duplicates...
+        self.incompatibilities = {"5":{"IKT 2":["IKT 1"],"IKT 1":["IKT 2"],
+                                  "Fisika Kimika 1":["Fisika Kimika 2", "Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
+                                  "Fisika Kimika 2":["Fisika Kimika 1", "Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
+                                  "Bio Geo":["Tek Ind","Marrazketa Teknikoa","Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
+                                  "Tek Ind":["Anatomia Ap.","Bio Geo","Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
+                                  "Anatomia Ap.":["Tek Ind","Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
+                                  "Marrazketa Teknikoa":["Historia 1", "Historia 2","Bio Geo","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
+                                  "Matematika 1": ["Matematika 2", "Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
+                                  "Matematika 2": ["Matematika 1","Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
+                             "Historia 1":["Historia 2", "Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
+                             "Historia 2":["Historia 1", "Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
+                             "Latina":["Ekonomia 1", "Ekonomia 2","Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
+                             "Matematika GGZZ I 1":["Matematika GGZZ I 2", "Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
+                             "Matematika GGZZ I 2":["Matematika GGZZ I 1", "Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
+                             "Ekonomia 1":["Ekonomia 2", "Latina","Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
+                             "Ekonomia 2":["Ekonomia 1", "Latina","Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
+                             "Marrazketa Artistikoa":["Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"]}}
+        
+        self.names = {"guard": "Zaintza","option":"h","meeting":"bilera","help":"laguntza","indep":"independiente","con_type":"Mota","conexion":"Konexion",
+                      "teacher_name":"Izena","subject":"Ikasgaia","group":"Taldea","total_duration":"Orduak","room":"Gela","year":"Maila","building":"Eraikina"}
+        
     def set_hours(self, hours):
         HoursElement = self.fetxml.find('./Hours_List')
         NumberElement = ET.SubElement(HoursElement, 'Number')
@@ -1353,16 +1375,16 @@ class MendiFet:
         
     def read_csv_data(self, csvfile, separator=','):
         s = [line.rstrip().split(separator) for line in open(csvfile, 'r')]
-        
-        self.contype = s[0].index("Mota")
-        self.con = s[0].index("Konexion")
-        self.teacher = s[0].index("Izena")
-        self.subject = s[0].index("Ikasgaia")
-        self.group = s[0].index("Taldea")
-        self.totalduration = s[0].index("Orduak")
-        self.room = s[0].index("Gela")
-        self.year = s[0].index("Maila")
-        self.building = s[0].index("Eraikina")
+                
+        self.contype = s[0].index(self.names["con_type"])
+        self.con = s[0].index(self.names["conexion"])
+        self.teacher = s[0].index(self.names["teacher_name"])
+        self.subject = s[0].index(self.names["subject"])
+        self.group = s[0].index(self.names["group"])
+        self.totalduration = s[0].index(self.names["total_duration"])
+        self.room = s[0].index(self.names["room"])
+        self.year = s[0].index(self.names["year"])
+        self.building = s[0].index(self.names["building"])
         
         self.raw_data = s[1:]
         
@@ -1379,7 +1401,7 @@ class MendiFet:
         print("Subgroups: ",sg)
         activities = []
         for j in self.raw_data:
-            if j[self.contype] in ['bilera']:
+            if j[self.contype] in [self.names["meeting"]]:
                 activities.append(j)
             else:
                 nl = j[:3] + list([self.getgroups(j,sg)]) + j[4:]
@@ -1393,15 +1415,15 @@ class MendiFet:
             self.rooms.add(activity[self.room])
             self.subjects.add(activity[self.subject])
             self.buildings.add(activity[self.building])
-            if activity[self.contype] == "h":
+            if activity[self.contype] == self.names["option"]:
                 haut.append(activity)
-            if activity[self.contype] == "bilera":
+            if activity[self.contype] == self.names["meeting"]:
                 bilera.append(activity)
-            if activity[self.contype] == "laguntza":
+            if activity[self.contype] == self.names["help"]:
                 lag.append([activity[self.teacher], activity[self.subject], activity[self.year], activity[self.group], activity[self.totalduration], activity[self.room], activity[self.con]])
-            if activity[self.contype] == "independiente":
+            if activity[self.contype] == self.names["indep"]:
                 indep.append(activity)
-            if activity[self.contype] == "zaintza":
+            if activity[self.contype] == self.names["guard"]:
                 zaintzak.append(activity)
                 
         haug = self.generate_all_option_groups(self.generate_hautazkoak(haut))
@@ -1554,7 +1576,7 @@ class MendiFet:
         Creates all combinations from two or more lists
         combine ([['h'],['erl','be'],['plas','fra','ale']])  
         ['h-erl-plas', 'h-erl-fra', 'h-erl-ale', 'h-be-plas', 'h-be-fra', 'h-be-ale']
-        '''
+        '''     
         l = len(groups)
         if l < 1:
             raise ValueError()
@@ -1565,10 +1587,24 @@ class MendiFet:
         for l2 in groups[1:]:
             for e1 in l1:
                 for e2 in l2:
-                    c.append(str(e1)+"-"+str(e2))
+                    if not self.incompatiblegroups(e1[0],e2,e1.split("-"),self.incompatibilities):
+                        c.append(str(e1)+"-"+str(e2))
             l1 = c
             c = []
         return l1
+    
+    def incompatiblegroups(self,course,group,combinations,incompatibilities):
+        #returns True if there is an incompatibility among the groups (its not possible to do
+        #4th course latin and biology-geology.
+        #inputs are course, the subject-group, the list of combinations of subject-groupss
+        #and the list of incompatible subjects
+        #incompatiblegroups('5', 'Fisika Kimika', {'5', 'H', 'Historia'}, {"5":{"Fisika Kimika":["Historia","Latina","Ekonomia","Matematika GGZZ","Marrazketa Artistikoa"],"Matematika": ["Historia","Latina","Ekonomia","Matematika GGZZ","Marrazketa Artistikoa"]}})
+        #print("IN:",course,group,combinations,incompatibilities)
+        if course not in  incompatibilities.keys() or group not in incompatibilities[course].keys():
+            return False
+        if set(combinations).intersection(incompatibilities[course][group]) != set():
+            return True
+        return False
 
 
     def extract(self,activities):

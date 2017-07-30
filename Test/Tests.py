@@ -161,6 +161,15 @@ class TestMendiFet(unittest.TestCase):
         r = mf.generate_hautazkoak(activities)
         self.assertEqual(o,r)
         
+    def test_incompatibilities_T(self):
+        mf = MendiFet()
+        i = mf.incompatiblegroups('5', 'Fisika Kimika', {'5', 'H', 'Historia'}, {"5":{"Fisika Kimika":["Historia","Latina","Ekonomia","Matematika GGZZ","Marrazketa Artistikoa"],"Matematika": ["Historia","Latina","Ekonomia","Matematika GGZZ","Marrazketa Artistikoa"]}})
+        self.assertEqual(i, True)
+    
+    def test_incompatibilities_F(self):
+        mf = MendiFet()
+        i = mf.incompatiblegroups('5', 'Matematika', {'5', 'Fisika Kimika'}, {"5":{"Fisika Kimika":["Historia","Latina","Ekonomia","Matematika GGZZ","Marrazketa Artistikoa"],"Matematika": ["Historia","Latina","Ekonomia","Matematika GGZZ","Marrazketa Artistikoa"]}})
+        self.assertEqual(i, False)
         
 if __name__ == '__main__':
     unittest.main()
