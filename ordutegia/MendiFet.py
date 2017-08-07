@@ -789,7 +789,7 @@ class MendiFet:
       if activities[3]=="Trinkete": duration=2  #FIXME: Dirty hack for Gorputz HEziketa in Trinekte
       if  hours>days:
          duration=2
-         actamount=hours/duration
+         actamount=int(hours/duration)
          rest=hours%duration
          if actamount <= days: #If activities can be grouped in 2 hours less or equal than days, they 
             #should not be the same day
@@ -813,7 +813,7 @@ class MendiFet:
          for a in self.generate_room(Id,activities[3],hours/duration):
             SpaceConstraintElement.append(a)
             #TimeConstraintElement.append(self.generate_min_days(Id,activities[j][2]))
-         for i in range(hours/duration):
+         for i in range(int(hours/duration)):
             ActivitiesElement.append(self.generate_activity(activities,Id,gid,duration))
             Id+=1
 #      if rest: ActivitiesElement.append(self.generate_activity(activities,Id,gid))
@@ -1096,7 +1096,7 @@ class MendiFet:
       #Saiatu dictionary erabiliz egiten
       s=[]
       for r in activities:
-         v = [r[0].decode('utf-8'),r[1].decode('utf-8'),r[4],r[5].decode('utf-8'),[r[2]+"-"+r[3]]]
+         v = [r[0],r[1],r[4],r[5],[r[2]+"-"+r[3]]]
          s.append(v)
       return s
 
@@ -1114,9 +1114,9 @@ class MendiFet:
       s=[]
       for r in activities:
          #FIXME: Saiatu bihurtzen jardueran normal bat irakasle askorekin
-#         print(r)
-         v = [r[-1],[[r[1].decode('utf-8'),r[2].decode('utf-8'),r[4].decode('utf-8'),r[5].decode('utf-8'),r[2].decode('utf-8')+"-"+r[3].decode('utf-8')],[r[0].decode('utf-8')]]]
-#         print(v)
+         #print(r)
+         v = [r[-1],[[r[1],r[2],r[4],r[5],"B-"+r[1]],[r[0]]]]
+         #print(v)
          for i in range(len(s)):
             if s[i][0] == v[0]:
                s[i][1][1].append(v[1][1][0])
@@ -1145,10 +1145,10 @@ class MendiFet:
          if len(r[3])>1:
             Taldeak=[]
             for j in range(len(r[3])):
-               Taldeak.append(r[2].decode('utf-8')+"-"+r[3][j].decode('utf-8')+"-"+r[1].decode('utf-8'))
-            v = [r[-1],[[r[0].decode('utf-8'),r[1].decode('utf-8'),r[4].decode('utf-8'),r[5].decode('utf-8'),Taldeak]]]
+               Taldeak.append(r[2]+"-"+r[3][j]+"-"+r[1])
+            v = [r[-1],[[r[0],r[1],r[4],r[5],Taldeak]]]
          else:
-            v = [r[-1],[[r[0].decode('utf-8'),r[1].decode('utf-8'),r[4].decode('utf-8'),r[5].decode('utf-8'),[r[2].decode('utf-8')+"-"+r[3].decode('utf-8')]]]]
+            v = [r[-1],[[r[0],r[1],r[4],r[5],[r[2]+"-"+r[3]]]]]
          for i in range(len(s)):
             if s[i][0] == v[0]:
                s[i][1].insert(len(s[i][1]),v[1][0])
@@ -1178,9 +1178,9 @@ class MendiFet:
       for r in activities:
          v = [r[-1],r[0:-1]]
          if len(r[3])>1:
-            v = [r[-1],[r[0].decode('utf-8'),r[1].decode('utf-8'),r[4].decode('utf-8'),r[5].decode('utf-8'),[r[2].decode('utf-8')+"-"+r[3][0].decode('utf-8')+"-P",r[2].decode('utf-8')+"-"+r[3][1].decode('utf-8')+"-P"]]]
+            v = [r[-1],[r[0],r[1],r[4],r[5],[r[2]+"-"+r[3][0]+"-P",r[2]+"-"+r[3][1]+"-P"]]]
          else:
-            v = [r[-1],[r[0].decode('utf-8'),r[1].decode('utf-8'),r[4].decode('utf-8'),r[5].decode('utf-8'),[r[2].decode('utf-8')+"-"+r[3].decode('utf-8')+"-G"]]]
+            v = [r[-1],[r[0],r[1],r[4],r[5],[r[2]+"-"+r[3]+"-G"]]]
          for i in range(len(s)):
             if s[i][0] == v[0]:
                s[i].insert(len(s[i]),v[1:][0])
@@ -1209,8 +1209,8 @@ class MendiFet:
          v = [r[-1],r[0:-1]]
          Taldeak=[]
          for j in range(len(r[3])):
-            Taldeak.append(r[2].decode('utf-8')+"-"+r[3][j].decode('utf-8')+"-"+r[1].decode('utf-8'))
-         v = [r[-1],[r[0].decode('utf-8'),r[1].decode('utf-8'),r[4].decode('utf-8'),r[5].decode('utf-8'),Taldeak]]
+            Taldeak.append(r[2]+"-"+r[3][j]+"-"+r[1])
+         v = [r[-1],[r[0],r[1],r[4],r[5],Taldeak]]
          for i in range(len(s)):
             if s[i][0] == v[0]:
                s[i].insert(len(s[i]),v[1:][0])
@@ -1232,8 +1232,8 @@ class MendiFet:
             activity=ET.SubElement(connections,"activty")
             for j in range(len(r[4])):
                group=ET.SubElement(activity,"group")
-               group.text=(r[3]+"-"+r[4][j]+"-"+r[2].decode('utf-8'))
-            v = [r[-1],[r[1].decode('utf-8'),r[2].decode('utf-8'),r[5],r[6],Taldeak]]
+               group.text=(r[3]+"-"+r[4][j]+"-"+r[2])
+            v = [r[-1],[r[1],r[2],r[5],r[6],Taldeak]]
             for i in range(len(s)):
                if s[i][0] == v[0]:
                   s[i].insert(len(s[i]),v[1:][0])
