@@ -67,27 +67,17 @@ class MendiFet:
         self.roombuilding = {}
         
         #FIXME: the function can check if the subjects ends with a number to avoid duplicates...
-        self.incompatibilities = {"5":{"IKT 2":["IKT 1"],"IKT 1":["IKT 2"],
-                                  "Fisika Kimika 1":["Fisika Kimika 2", "Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
-                                  "Fisika Kimika 2":["Fisika Kimika 1", "Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
-                                  "Bio Geo":["Tek Ind","Marrazketa Teknikoa","Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
-                                  "Tek Ind":["Anatomia Ap.","Bio Geo","Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
-                                  "Anatomia Ap.":["Tek Ind","Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
-                                  "Marrazketa Teknikoa":["Historia 1", "Historia 2","Bio Geo","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
-                                  "Matematika 1": ["Matematika 2", "Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
-                                  "Matematika 2": ["Matematika 1","Historia 1", "Historia 2","Latina","Ekonomia 1", "Ekonomia 2","Matematika GGZZ I 1", "Matematika GGZZ I 2","Marrazketa Artistikoa"],
-                             "Historia 1":["Historia 2", "Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
-                             "Historia 2":["Historia 1", "Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
-                             "Latina":["Ekonomia 1", "Ekonomia 2","Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
-                             "Matematika GGZZ I 1":["Matematika GGZZ I 2", "Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
-                             "Matematika GGZZ I 2":["Matematika GGZZ I 1", "Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
-                             "Ekonomia 1":["Ekonomia 2", "Latina","Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
-                             "Ekonomia 2":["Ekonomia 1", "Latina","Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"],
-                             "Marrazketa Artistikoa":["Fisika Kimika 1","Fisika Kimika 2","Matematika 1", "Matematika 2","Tek Ind", "Bio Geo", "Anatomia Ap.","Marrazketa Teknikoa"]}}
+        self.incompatibilities = {}
         
         self.names = {"guard": "Zaintza","option":"h","meeting":"bilera","help":"laguntza","indep":"independiente","con_type":"Mota","conexion":"Konexion",
-                      "teacher_name":"Izena","subject":"Ikasgaia","group":"Taldea","total_duration":"Orduak","room":"Gela","year":"Maila","building":"Eraikina"}
+                      "teacher_name":"Irakaslea","subject":"Ikasgaia","group":"Taldea","total_duration":"Orduak","room":"Gela","year":"Maila","building":"Eraikina"}
         
+    def set_incompatibilities(self,incompatibilities):
+        self.incompatibilities = incompatibilities
+        
+    def set_name(self,name,cname):
+        self.names[name] =  cname
+            
     def set_hours(self, hours):
         HoursElement = self.fetxml.find('./Hours_List')
         NumberElement = ET.SubElement(HoursElement, 'Number')
@@ -1398,7 +1388,7 @@ class MendiFet:
     
         sg = self.generatesubgroups(self.raw_data)
         
-        print("Subgroups: ",sg)
+        #print("Subgroups: ",sg)
         activities = []
         for j in self.raw_data:
             if j[self.contype] in [self.names["meeting"]]:
@@ -1406,7 +1396,7 @@ class MendiFet:
             else:
                 nl = j[:3] + list([self.getgroups(j,sg)]) + j[4:]
                 activities.append(nl)
-        print("activities: ",activities)
+        #print("activities: ",activities)
 
             
         for activity in activities:
@@ -1532,15 +1522,18 @@ class MendiFet:
         con = defaultdict(list)
         for activity in activities:
             if (activity[self.con] != '') and (activity[self.contype] not in  ['bilera','zaintza']):
-                if any(activity[self.subject] in i[self.subject] for i in  con[activity[self.con]]):
-                    raise NameError("Same subject ({}) in a connection ({})".format(activity[self.subject],activity[self.con]))
+                #if any(activity[self.subject] in i[self.subject] for i in  con[activity[self.con]]):
+                #    raise NameError("Same subject ({}) in a connection ({})".format(activity[self.subject],activity[self.con]))
                     #If this is not checked you get duplicates, for grupos pequeños...
                     #['Begoña', 'Natur', '1DBH', ['1-H-BE-Natur', '1-H-BE-Natur', '1-H-ERL-Natur', '1-H-ERL-Natur'], '4', '1A2', 'z']
                     #['Juanjo', 'Natur', '1DBH', ['1-H-BE-Natur', '1-H-BE-Natur', '1-H-ERL-Natur', '1-H-ERL-Natur', '1-I-BE-Natur', '1-I-ERL-Natur'], '4', '1A3', 'z']
                 if any(activity[self.teacher] in i[self.teacher] for i in  con[activity[self.con]]):
                     raise NameError("Same teacher ({}) in a connection ({})".format(activity[self.teacher],activity[self.con]))
-                if any(activity[self.room] in i[self.room] for i in  con[activity[self.con]]):
-                    raise NameError("Same room ({}) in a connection ({})".format(activity[self.room],activity[self.con]))      
+                #if any(activity[self.room] in i[self.room] for i in  con[activity[self.con]]):
+                #    #FIXME: Rooms starting same name as equal 1_1DE as 1_1D
+                #    print(activity[self.room],"_",con[activity[self.con]][0][self.room])
+                #    print([i[self.room] for i in  con[activity[self.con]]])
+                #    raise NameError("Same room ({}) in a connection ({})".format(activity[self.room],activity[self.con]),con[activity[self.con]])      
                 con[activity[self.con]].append(activity)
         return con
         
@@ -1564,11 +1557,14 @@ class MendiFet:
         for groupleter in activity[self.group][1:]:
             groups.append(activity[self.group][0]+"-"+groupleter)
         for group in groups:
-            for subgroup in sg[group]:
-                if ("-"+activity[self.subject] in subgroup) or (activity[self.con]==''):
-                    # second par of the or
-                    #It's not connected so all subgroups of the group
-                    subgroups.append(subgroup)
+            if group in sg.keys(): #a
+                for subgroup in sg[group]:
+                    if ("-"+activity[self.subject] in subgroup) or (activity[self.con]==''):
+                        # second par of the or
+                        #It's not connected so all subgroups of the group
+                        subgroups.append(subgroup)
+            else:#a
+                subgroups.append(group)#a
         return(subgroups)
 
     def combine(self,groups):
