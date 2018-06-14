@@ -12,6 +12,7 @@ class evaluation():
         pass
     
     def extractinfo(self,inputfile,forbiden):
+        print(inputfile)
         if inputfile[-4:] == ".csv":
             return self.extractinfoCSV(inputfile,forbiden)
         elif inputfile[-4:] == ".xml":
@@ -248,6 +249,7 @@ class evaluation():
         order to maximize teachers presence and minimize teachers comming
         days
         '''
+        print(tfile)
         a,g,t = self.extractinfo(tfile,forbiden)
         c = 999999999999
         c0 = c

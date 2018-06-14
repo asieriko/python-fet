@@ -134,7 +134,7 @@ class Ui(QtWidgets.QMainWindow):
                     if not self.ui.deusRB.isChecked():
                         if subject == "Zaintza":
                             self.ui.tableWidget.item(int(hourt), int(dayt)).setBackground(QtGui.QColor(QtGui.QColor(100,100,150)));
-                            if room[-1] == "2" :
+                            if room[0] == "2" :
                                 self.ui.tableWidget.item(int(hourt), int(dayt)).setTextAlignment(2);
                                 if self.ui.denakRB.isChecked():
                                     self.ui.tableWidget.item(int(hourt), int(dayt)).setForeground(QtGui.QColor(QtGui.QColor("white")))
@@ -219,7 +219,8 @@ class Ui(QtWidgets.QMainWindow):
         msg.exec_()
 
 
-        return OrderedDict(sorted(tdic.items())), sumdicNew, sumtotal
+        return  sumdicNew, sumtotal
+        #return OrderedDict(sorted(tdic.items())), sumdicNew, sumtotal
   
   
     def evaluate(self,teachername):

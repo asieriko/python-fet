@@ -21,7 +21,7 @@ def get_rooms(root):
    return rooms
 
 
-def open(edfile="../educa.xml"):
+def open(edfile="educa.xml"):
    tree = ET.parse(edfile)
    root = tree.getroot()
    return tree,root
@@ -92,7 +92,7 @@ for year in y:
       tr.addElement(tc)
       l = r.findall('.//SOLUCF[@CODGRUPO="'+year+'"][@DIA="'+str(day)+'"][@HORA="'+str(hour)+'"]')
       for a in l: 
-	tc.addElement(text.P(text=a.get("ASIG") + ' (' + teacher_name(r,a.get("PROF")) +' - '+ room_name(r,a.get("AULA"))+')'))
+         tc.addElement(text.P(text=a.get("ASIG") + ' (' + teacher_name(r,a.get("PROF")) +' - '+ room_name(r,a.get("AULA"))+')'))
     rownum += 1
   textdoc.text.addElement(datatable)
   

@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from collections import defaultdict
-import csv
+import csv,sys,getopt
 
 import random
 
@@ -55,7 +55,7 @@ class ebaluazioak():
         '''
         gets the groups and teachers data from a fet teachers.xml file or a CSV file
         '''
-        if file[-3:] == "fet":
+        if file[-3:] == "xml":
             self.read_FET(file)
         elif file[-3:] == "csv":
             self.read_CSV(file)
@@ -76,6 +76,7 @@ class ebaluazioak():
                 for row in reader:
                     group = row[0]
                     if group in self.forbidden:
+                        print("forbidden: ",group)
                         continue
                     self.allgroups.append(group)
                     for teacher in row[1:]:
@@ -87,11 +88,13 @@ class ebaluazioak():
                                 self.tdic[teacher] = [group]
         print(self.allgroups)
         
-    def read_FET(self,file):
+    def read_FET(self,file=None):
         '''
         gets the groups and teachers data from a fet teachers.xml file
         '''
-        tree = ET.parse("/home/asier/Hezkuntza/python-hezkuntza/python-fet/EDUCA/teachers.xml")
+        if file == None:
+            file = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/EDUCA/teachers.xml"
+        tree = ET.parse(file)
         root = tree.getroot()
         teachers = root.findall(".//Teacher")
         for teacher in teachers:
@@ -111,6 +114,20 @@ class ebaluazioak():
                 if name not in self.gdic[group.attrib.get('name')[:3]]:
                     self.gdic[group.attrib.get('name')[:3]].append(name)
             self.tdic[name] = groups
+        with open('mycsvfile.csv','w') as f:
+            w = csv.writer(f)
+            for n in self.gdic.keys():
+                row = n + ',' + ','.join(self.gdic[n])
+                print(row)
+                l = [n]
+                for t in self.gdic[n]:
+                    l.append(t)
+                w.writerow(l)
+        #
+            #w = csv.writer(sys.stderr)
+            #w.writerow(self.gdic.keys())
+            #w.writerow(zip(*self.gdic.values()))
+            
 
     
     def generateIndex(self):
@@ -233,14 +250,49 @@ def configure_deap(size,evfun):
     
     return toolbox
 
-def main():
+def main(argv):
+    inputfile = ''
+    outputfile = ''
+    sessions = 12
+    days = 2
+    population = 300
+    generations = 400
+    helptext= 'python3 evaluazioakdeap.py -s sessions_number -d days -p population -g generations'
+    try:
+      opts, args = getopt.getopt(argv,"hi:o:s:d:p:g:",["ifile=","ofile=","sessions=","days=","population=","generations="])
+    except getopt.GetoptError:
+      print(helptext)
+      sys.exit(2)
+    for opt, arg in opts:
+      if opt == '-h':
+         print(helptext)
+         sys.exit()
+      elif opt in ("-i", "--ifile"):
+         inputfile = arg
+      elif opt in ("-o", "--ofile"):
+         outputfile = arg
+      elif opt in ("-s", "--sessions"):
+         sessions = int(arg)
+      elif opt in ("-d", "--days"):
+         days = int(arg)
+      elif opt in ("-p", "--population"):
+         sessions = int(arg)
+      elif opt in ("-g", "--generations"):
+         days = int(arg)
+         
     ev = ebaluazioak()
-    ev.set_forbidden(['B','M','6'])
+    ev.set_forbidden(['B','M','6','1-Z','2-Z'])
+    #/home/asier/Hezkuntza/python-hezkuntza/17-18/timetables/Horario1718-single/Horario1718_teachers.xml
     
-    file = input("Enter the .fet or .csv filepath: ")
-    ev.read_data(file)
+    print(inputfile)
     
-    data = {'sessions':12,'days':2,'population': 300,'generations':400}
+    if inputfile == '':
+        inputfile = input("Enter the teachers.xml or .csv filepath: ")
+        ev.read_data(inputfile)
+        
+    print(inputfile)
+    
+    data = {'sessions':sessions,'days':days,'population': population,'generations':generations}
     
     pop, stats, hof = best_ev_grouping(ev,data)
     
@@ -268,6 +320,8 @@ def main():
         print(i+1,"st day:")
         for j,hour in enumerate(day):
             print(j+1,": ",sorted(hour))
+    #print(ev.tdic)
+    #print(ev.gdic)
     
     
 def best_ev_grouping(ev,data):    
@@ -303,4 +357,4 @@ def best_ev_days(ev,best,data):
     return pop, stats, hof
 
 if __name__ == "__main__":
-    main()
+   main(sys.argv[1:])

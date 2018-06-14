@@ -59,6 +59,11 @@ class MendiFet:
       self.building=None
       
       self.rooms={}
+      self.names = {"guard": "Zaintza","option":"h","meeting":"bilera","help":"laguntza","indep":"independiente","con_type":"Mota","conexion":"Konexion",
+                      "teacher_name":"Irakaslea","subject":"Ikasgaia","group":"Taldea","total_duration":"Orduak","room":"Gela","year":"Maila","building":"Eraikina"}
+   
+   def set_field_name(self,name,cname):
+        self.names[name] =  cname
    
    def set_hours(self,hours):
       HoursElement=self.fetxml.find('./Hours_List')
@@ -733,12 +738,12 @@ class MendiFet:
    #activities=[[teacher.subject,hours,room,groups],[..]]
    #groups=['1-A-OM','1-B-OM','1-C-OM']
    #activities=[['Asier','OM',2,'1-A',['1-A-OM','1-B-OM','1-C-OM']],['Oskia','HA',2,'1-B',['1-A-HA','1-B-HA','1-C-HA']]]
-   def generate_simultaneous_activities(self,activities,idm):
+   def generate_simultaneous_activities(self,activities,idm,tags=None):
       """
       Generates the necesary xml for geneateSimultaneousActivities: the activities,
       rooms,samestartingtime...
       input: 
-      activities=[[teacher.subject,hours,room,groups],[..]]
+      activities=[[teacher,subject,hours,room,groups],[..]]
       where: groups=['1-A-OM','1-B-OM','1-C-OM']
       """
       #print("generate_simultaneous_activities")
@@ -748,8 +753,9 @@ class MendiFet:
       Id=int(idm)
       gid=Id
       TimeConstraintElement=self.fetxml.find('./Time_Constraints_List')
-      if int(activities[0][2]) > 1:
-         if len(activities)>1:TimeConstraintElement.append(self.generate_min_days(Id,activities[0][2]))#?
+      if int(activities[0][2]) >= 1: #FIXME: I had problems with 1 hour activities, I don't even understand why this if is here
+         if len(activities)>1:
+             TimeConstraintElement.append(self.generate_min_days(Id,activities[0][2]))#?
          for a in self.generate_start_time(Id,len(activities),int(activities[0][2])):
             TimeConstraintElement.append(a)
       SpaceConstraintElement=self.fetxml.find('./Space_Constraints_List')
@@ -761,11 +767,11 @@ class MendiFet:
          #TimeConstraintElement.append(self.generate_min_days(Id,activities[j][2]))
          activity=activities[j]
          for i in range(int(activity[2])):
-            ActivitiesElement.append(self.generate_activity(activity,Id,gid))
+            ActivitiesElement.append(self.generate_activity(activity,Id,gid,tags=tags))
             Id+=1
          gid=Id
                   
-   def generate_independent_activities(self,activities,idm):
+   def generate_independent_activities(self,activities,idm,tags=None):
       """
       Generates the necesary xml for geneateIndependentActivities: the activities,
       rooms,...
@@ -799,13 +805,13 @@ class MendiFet:
          for a in self.generate_room(Id,activities[3],hours/duration+rest):
             SpaceConstraintElement.append(a)
          for j in range(actamount):
-            ActivitiesElement.append(self.generate_activity(activities,Id,gid,duration))
+            ActivitiesElement.append(self.generate_activity(activities,Id,gid,duration,tags=tags))
             Id+=1
             if actamount>days:gid+=1
          if rest != 0:
             if actamount>days:activities[2]=rest
             duration=rest
-            ActivitiesElement.append(self.generate_activity(activities,Id,gid,duration))
+            ActivitiesElement.append(self.generate_activity(activities,Id,gid,duration,tags=tags))
       else:
          if hours > duration:#Was hours>1, changed for an activity with duration=2?
             TimeConstraintElement.append(self.generate_min_days(Id,activities[2]))#?
@@ -814,9 +820,9 @@ class MendiFet:
             SpaceConstraintElement.append(a)
             #TimeConstraintElement.append(self.generate_min_days(Id,activities[j][2]))
          for i in range(int(hours/duration)):
-            ActivitiesElement.append(self.generate_activity(activities,Id,gid,duration))
+            ActivitiesElement.append(self.generate_activity(activities,Id,gid,duration,tags=tags))
             Id+=1
-#      if rest: ActivitiesElement.append(self.generate_activity(activities,Id,gid))
+#      if rest: ActivitiesElement.append(self.generate_activity(activities,Id,gid,tags=tags))
       
    def group_long_activities(self,hours):
       #FIXME 13 hours: 4,1 =>3-3-3-3-1
@@ -832,7 +838,7 @@ class MendiFet:
       return number,mod
          
    
-   def generate_laguntza_activities(self,activities,idm):
+   def generate_laguntza_activities(self,activities,idm,tags=None):
       """
       Generates the necesary xml for (some) sessions with multiple teachers: the activities,
       rooms,...
@@ -872,6 +878,10 @@ class MendiFet:
             Teacher.text=main[0]
          Subject=ET.SubElement(ActivityElement,"Subject")
          Subject.text=main[1]
+         if tags:
+          for t in tags:
+              Tag=ET.SubElement(ActivityElement,"Activity_Tag")
+              Tag.text=t
          Group=ET.SubElement(ActivityElement,"Students")
          Group.text=main[4][0]#shoul be [0][1]
          Duration=ET.SubElement(ActivityElement,"Duration")
@@ -891,7 +901,7 @@ class MendiFet:
          #print(ET.dump(ActivityElement))
       #print(ET.dump(ActivitiesElement))
       
-   def generate_multiple_teachers(self,activities,idm):
+   def generate_multiple_teachers(self,activities,idm,tags=None):
       """
       Generates the necesary xml for sessions with multiple tfeachers: the activities,
       rooms,...
@@ -915,6 +925,10 @@ class MendiFet:
          Teacher.text=teacher
       Subject=ET.SubElement(ActivityElement,"Subject")
       Subject.text=activities[0][0]
+      if tags:
+          for t in tags:
+              Tag=ET.SubElement(ActivityElement,"Activity_Tag")
+              Tag.text=t
       Group=ET.SubElement(ActivityElement,"Students")
       Group.text=activities[0][4]#FIXME gropus not generated??
       Duration=ET.SubElement(ActivityElement,"Duration")
@@ -930,7 +944,7 @@ class MendiFet:
       Comments=ET.SubElement(ActivityElement,"Comments")
       Comments.text=' '
                
-   def generate_activity(self,activity,Id,gid,duration='1'):    
+   def generate_activity(self,activity,Id,gid,duration='1',tags=None):    
       """Generates a fet activity xml from a tuple formated as: [Teacher,Subject,Total_Duration,Room,[Group(s)]] 
       and the activity Id, and activities group Id
       Returns
@@ -951,11 +965,15 @@ class MendiFet:
       Teacher.text=activity[0]
       Subject=ET.SubElement(ActivityElement,"Subject")
       Subject.text=activity[1]
+      if tags:
+          for t in tags:
+              Tag=ET.SubElement(ActivityElement,"Activity_Tag")
+              Tag.text=t
       if not isinstance(activity[4], str):  #python2-> if not isinstance(activity[4], basestring):
          for group in activity[4]:
             Group=ET.SubElement(ActivityElement,"Students")
             Group.text=group   
-      else:
+      elif activity[4] != '':
          Group=ET.SubElement(ActivityElement,"Students")
          Group.text=activity[4]
       Duration=ET.SubElement(ActivityElement,"Duration")
@@ -1116,6 +1134,7 @@ class MendiFet:
          #FIXME: Saiatu bihurtzen jardueran normal bat irakasle askorekin
          #print(r)
          v = [r[-1],[[r[1],r[2],r[4],r[5],"B-"+r[1]],[r[0]]]]
+         #v = [r[-1],[[r[1],r[2],r[4],r[5],r[2]+"-"+r[3]],[r[0]]]]
          #print(v)
          for i in range(len(s)):
             if s[i][0] == v[0]:
@@ -1222,7 +1241,7 @@ class MendiFet:
             s.append(v)
       return s
    
-   def generate_hautazkoak_XML(CSVfile):
+   def generate_hautazkoak_XML(self,CSVfile):
       #Saiatu dictionary erabiliz egiten
       with open(CSVfile,'rb') as csvfile: 
          s=[]
@@ -1315,6 +1334,16 @@ class MendiFet:
          
       return Students
       
+   
+   def generate_tags_from_activities(self):
+      """
+      Returns the tags defined in activities from the suplied fet file
+      """
+      TagList = self.fetxml.find('./Activity_Tags_List')
+      for tag in  list(set([b.text for b in self.fetxml.findall('.//Activity/Activity_Tag')])):
+         Tag = ET.SubElement(TagList,"Activity_Tag")
+         TagName = ET.SubElement(Tag,"Name")
+         TagName.text = tag
       
      
    def generate_teachers_from_activities(self):
@@ -1344,11 +1373,21 @@ class MendiFet:
       """
       RoomsList=self.fetxml.find('./Rooms_List')
       for room in list(set([b.text for b in self.fetxml.findall('.//ConstraintActivityPreferredRoom/Room')])):#Eraikinak  -list(set([a.text for a in self.xmlfile.findall('./Room/Name')]))
+         if room =='':
+             continue
          Room=ET.SubElement(RoomsList,"Room")
          RoomName=ET.SubElement(Room,"Name")
          RoomName.text=room
          RoomBuilding=ET.SubElement(Room,"Building")
-         RoomBuilding.text=self.rooms[room]
+         RoomBuilding.text=room[0]#self.rooms[room]
+      for room in list(set([b.text for b in self.fetxml.findall('.//ConstraintActivityPreferredRooms/Preferred_Room')])):
+         if room =='':
+             continue
+         Room=ET.SubElement(RoomsList,"Room")
+         RoomName=ET.SubElement(Room,"Name")
+         RoomName.text=room
+         RoomBuilding=ET.SubElement(Room,"Building")
+         RoomBuilding.text=room[0]#self.rooms[room]
 
    def generate_buildings_from_rooms(self):
       """
@@ -1356,41 +1395,90 @@ class MendiFet:
       """
       BuildingsList=self.fetxml.find('./Buildings_List')
       for bulding in list(set([b.text for b in self.fetxml.findall('.//Rooms_List/Room/Building')])):
+         print(bulding)
          Building=ET.SubElement(BuildingsList,"Building")
          BuildingName=ET.SubElement(Building,"Name")
          BuildingName.text=bulding
 
+   def generate_guard_activity(self,zaintzak,tags=None):
+                
+        Id = self.max_activity_id()
+        bulding1guards = 5 #FIXME: Not hardcoded
+        bulding2guards = 5
+        
+        ActivitiesElement = self.fetxml.find('./Activities_List')
+        SpaceConstraintElement = self.fetxml.find('./Space_Constraints_List')
+       
+        for zaintza in zaintzak:
+            for i in range(int(zaintza[self.totalduration])):
+                print(zaintza)
+
+                ActivitiesElement.append(self.generate_activity([zaintza[6],zaintza[2],1,"","",zaintza[9]], Id, Id, 1,tags=["alumnado","guardia"]))
+                
+                RoomConstraintElement = ET.Element('ConstraintActivityPreferredRooms')
+                WPerElement = ET.SubElement(RoomConstraintElement,'Weight_Percentage')
+                WPerElement.text = "100"
+                ActIdElement = ET.SubElement(RoomConstraintElement,'Activity_Id')
+                ActIdElement.text = str(Id)
+                NPerElement = ET.SubElement(RoomConstraintElement,'Number_of_Preferred_Rooms')
+                ActiveRElement = ET.SubElement(RoomConstraintElement,'Active')
+                ActiveRElement.text = "true"
+                ComRElement = ET.SubElement(RoomConstraintElement,'Comments')
+                #FIXME: Something more generic, configurable with number of guards and multiple buildins
+                if zaintza[self.building] == '1':             
+                    NPerElement.text = str(bulding1guards)
+                    for i in range(bulding1guards):
+                        PRElement = ET.SubElement(RoomConstraintElement,'Preferred_Room')
+                        PRElement.text = "1_Z"+str(i+1)
+                elif zaintza[self.building] == '2':
+                    NPerElement.text = str(bulding2guards)
+                    for i in range(bulding2guards):
+                        PRElement = ET.SubElement(RoomConstraintElement,'Preferred_Room')
+                        PRElement.text = "2_Z"+str(i+1)
+                elif zaintza[self.building] == '12':
+                    NPerElement.text = str(bulding1guards + bulding2guards)
+                    for i in range(bulding1guards):
+                        PRElement = ET.SubElement(RoomConstraintElement,'Preferred_Room')
+                        PRElement.text = "1_Z"+str(i+1)
+                    for i in range(bulding2guards):
+                        PRElement = ET.SubElement(RoomConstraintElement,'Preferred_Room')
+                        PRElement.text = "2_Z"+str(i+1)
+                        
+                SpaceConstraintElement.append(RoomConstraintElement)
+                Id = Id + 1
+        
+
    def generate_all_laguntza(self,groups):
       for group in groups:
          Id=self.max_activity_id()
-         self.generate_laguntza_activities(group[1],Id)
+         self.generate_laguntza_activities(group[1],Id,tags=["alumnado","apoyo","clase"])
          
    def generate_all_meetings(self,groups):
       for group in groups:
          Id=self.max_activity_id()
-         self.generate_multiple_teachers(group[1],Id)
+         self.generate_multiple_teachers(group[1],Id,tags=["reunión"])
    
    def generate_all_little_groups(self,groups):
       for group in groups:
          Id=self.max_activity_id()
-         activityroot=self.generate_simultaneous_activities(group[1:],Id)
+         activityroot=self.generate_simultaneous_activities(group[1:],Id,tags=["alumnado","clase"])
    #FIXME Both functions are equal, should be merged
    def generate_all_option_groups(self,groups):
       for group in groups:
          Id=self.max_activity_id()
-         activityroot=self.generate_simultaneous_activities(group[1:],Id)
+         activityroot=self.generate_simultaneous_activities(group[1:],Id,tags=["alumnado","clase"])
 
    def generate_all_independent_activities(self,groups):
       for group in groups:
          Id=self.max_activity_id()
-         activityroot=self.generate_independent_activities(group,Id)
+         activityroot=self.generate_independent_activities(group,Id,tags=["alumnado","clase"])
       
    def read_csv_data(self,csvfile,separator=','):
       s=[line.rstrip().split(separator) for line in open(csvfile,'r')]
       
       self.contype=s[0].index("Mota")
       self.con=s[0].index("Konexion")
-      self.teacher=s[0].index("Izena")
+      self.teacher=s[0].index("Irakaslea")
       self.subject=s[0].index("Ikasgaia")
       self.group=s[0].index("Taldea")
       self.totalduration=s[0].index("Orduak")
@@ -1406,25 +1494,30 @@ class MendiFet:
       indep=[]
       bilera=[]
       lag=[]
+      zaintzak = []
       
       for activity in self.raw_data:
          self.rooms[activity[self.room]]=activity[self.building]
          if activity[self.contype]=="tt":
             tt.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room],activity[self.con]])
-         if activity[self.contype]=="h":
+         if activity[self.contype]==self.names["option"]:
             haut.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room],activity[self.con]])
-         if activity[self.contype]=="bilera":
+         if activity[self.contype]==self.names["meeting"]:
             bilera.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room],activity[self.con]])
-         if activity[self.contype]=="laguntza":
+         if activity[self.contype]==self.names["help"]:
             lag.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room],activity[self.con]])
-         if activity[self.contype]=="independiente":
+         if activity[self.contype]==self.names["indep"]:
             indep.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room]])
+         if activity[self.contype] == self.names["guard"]:
+            zaintzak.append(activity)
+
             
       lg=self.generate_all_little_groups(self.generate_talde_txikiak(tt))
       haug=self.generate_all_option_groups(self.generate_hautazkoak(haut))
       ind=self.generate_all_independent_activities(self.generate_independent(indep))
       bil=self.generate_all_meetings(self.generate_meetings_groups(bilera))
       lagun=self.generate_all_laguntza(self.generate_laguntza_groups(lag))
+      zain = self.generate_guard_activity(zaintzak)
       #print(lg)
       #print(haut)
       #print(bil)

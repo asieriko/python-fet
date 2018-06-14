@@ -20,7 +20,7 @@ class Fet2EDUCA():
 
     def generate_all(self):
         self.DIV_GROUPS = ['2-P','2P','3-L','3L','3-D', '3D']
-        dir_path = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/16-17-data/"
+        dir_path = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/17-18-data/"
         self.teachers = self.load_teacher_file(os.path.join(dir_path, "irakasle.csv"))
         '''teachers
         'Koldo Bermejo': {'ABREV': 'TK_03', 'DEPART': 'Teknologia', 'NOMBRE': 'Koldo Bermejo'},
@@ -425,6 +425,7 @@ class Fet2EDUCA():
                         d[teachername + subjects[0].get('name') + str(hour) + str(eguna)] = {'Teacher': teachername, 'Subject': subjects[0].get('name'), 'Room': room, 'Group': [""], 'Day': eguna, 'Hour': hour}
         return t, d
 
+    
     def create_teacher_groups_dict2(self, root, orduak):
         t = {}
         for teacher in root.findall('.//Teacher'):
@@ -598,6 +599,7 @@ subgroupsxml=  """<?xml version="1.0" encoding="UTF-8"?>
       <Teacher name="Mariaje Ruiz"></Teacher> <Teacher name="Merche Ansa"></Teacher><Subject name="Tecnologia"></Subject><Room name="TailerraAintzira1"></Room>
     </Hour>
     <Hour name="14:30-15:20">"""
-    
-f2e = Fet2EDUCA()    
-f2e.generate_all()
+
+if __name__=="__main__":
+    f2e = Fet2EDUCA()
+    f2e.generate_all()
