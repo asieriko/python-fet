@@ -1,2 +1,5 @@
 /odfpy/
 /odf/
+*.csv
+*.odt
+*.png

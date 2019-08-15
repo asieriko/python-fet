@@ -299,8 +299,11 @@ def main(argv):
          inputfile = arg
       elif opt in ("-o", "--ofile"):
          outputfile = arg
+   forbiden = ['M','b','6','B','U']
    eva = evaluation()
-   eva.calculate(inputfile,['M','b','6'])
+   eva.calculate(inputfile,forbiden)
+
+#FIXME: Add headmaster option, with a big weight so they won't have a session at the same time
 
 if __name__ == "__main__":
    main(sys.argv[1:])

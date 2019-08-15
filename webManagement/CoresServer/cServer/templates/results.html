@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Results{% endblock %}
+{% block content %}
+        <h1>Results List</h1>
+        <table id="id_list_table" class="table">
+            <tr>
+                <th>Number</th>
+                <th>Filename</th>
+                <th>Fet timetable and data</th>
+                <th>Teachers file</th>
+                <th>View Teachers</th>
+                <th>Generation time</th>
+            </tr>
+             {% for result in results %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ result.fetfile.name }}</td>
+                    <td><a href="./results/fet/{{ result.id }}">{{ result.rfile.url }}</a></td>
+                    <td><a href="./results/teacher/{{ result.id }}">{{ result.tfile.url }}</a></td>
+                    <td><a href="./view/{{ result.id }}">[view]</a></td>
+                    <td> {{ result.time }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+{% endblock %}

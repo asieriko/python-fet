@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block title %}Results{% endblock %}
+{% block body %} onload="loadDoc()"{% endblock %}
+{% block content %}
+<h1>File: {{file}}</h1>
+<label for="select_id">Select teacher</label>
+<select id ="select_id" class="form-control" onchange="val()"></select>
+
+
+<script>
+    var xmlDoc,
+    // Create your table element
+    table = document.createElement('table');
+    table.className = "table table-bordered";
+
+function val(){
+  table.innerHTML = "";
+  var steacher = document.getElementById("select_id").value;
+  var teachers = xmlDoc.getElementsByTagName('Teacher');
+
+  var matrix = [];
+
+  for(var i=0, l=teachers.length; i<l; i++){
+      var teacher = teachers[i];
+      if (teacher.getAttribute('name') == steacher){
+        var days = teacher.getElementsByTagName('Day');
+        for(var j=0, lj=days.length; j<lj; j++){
+            matrix[j] = [];
+            var hours = days[j].getElementsByTagName('Hour');
+            matrix[j][0] = days[j].getAttribute('name');
+            for(var k=0, lk=hours.length; k<lk; k++){
+                var sub = hours[k].getElementsByTagName('Subject')
+                if (sub.length > 0){
+                    sub = sub[0].getAttribute('name');
+                }
+                else{
+                    sub = "";
+                }
+                var stu = ""
+                
+                var st = hours[k].getElementsByTagName('Students');
+                if (st.length > 0){
+                    for (var s=0, ls=st.length;s<ls;s++){
+                        stu += st[s].getAttribute('name');
+                    };
+                    if (sub == "Zaintza"){
+                    	stu = st[s].getAttribute('Room');
+                    };
+                }
+                else{
+                    stu = "";
+                }
+                
+                text = sub + " ("+stu+")";
+                if (text==" ()"){
+                    text="";
+                }
+                
+                matrix[j][k+1] = text;
+            }
+        }
+      }
+  }
+
+
+  for(var j=0, lj=matrix[0].length; j<lj; j++){
+            var tr = table.insertRow();
+            for(var k=0, lk=matrix.length; k<lk; k++){
+                var td = tr.insertCell();
+                var ih = matrix[k][j];
+                var c = ih[ih.indexOf("(")+1];
+                console.log(c);
+                td.innerHTML = ih;
+                if (j > 0) {
+                	if (c == "1" || c=="2")
+                	{
+                		td.setAttribute("bgcolor", "green");
+                	};
+                	if (c > "2" && c < "7")
+                	{
+                		td.setAttribute("bgcolor", "red");
+                	};
+                };
+            }
+  }
+}
+                 
+
+
+
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+    readFile(this);
+    }
+  };
+  xhttp.open("GET", "http://127.0.0.1:8000/fet/fetfiles/results/teacher/{{id}}", true);
+  xhttp.send();
+}
+
+function readFile(xml) {
+  var i;
+  var xmlString = xml.response;
+  // Parse the xml
+    if (window.DOMParser){ // Standard browsers
+        var parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlString, "text/xml");
+    }
+    else { // Internet Explorer
+        xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+        xmlDoc.async = false;
+        xmlDoc.loadXML(xmlString); 
+    }
+
+  var teachers = xmlDoc.getElementsByTagName('Teacher');
+  var select = document.getElementById("select_id");
+  for(var i=0, l=teachers.length; i<l; i++){
+    var teacher = teachers[i];
+    var option = document.createElement("option");
+    option.value = teachers[i].getAttribute('name');
+    option.text = teachers[i].getAttribute('name');
+    select.appendChild(option);
+  }
+
+  // Append it to the body?
+  document.body.appendChild(table);
+}
+</script>
+{% endblock %}

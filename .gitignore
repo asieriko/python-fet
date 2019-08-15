@@ -2,13 +2,22 @@
 ordutegia/zaharrak
 ordutegia/timetables
 ordutegia/data
+ordutegia/*.odt
 EDUCA/*.html
 EDUCA/*.xml
 EDUCA/*.xhtml
+EDUCA/odf
 EDUCA/datuak.py
 EDUCA/datuak1415.py
 webapp/wavenv
 webapp/files/*
+*.csv
+*.odt
+*.png
+*.fet
+
+.directory
+.gitignore
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

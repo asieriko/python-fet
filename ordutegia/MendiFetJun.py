@@ -37,553 +37,6 @@ class MendiFet:
                <Active>true</Active>
                <Comments></Comments>
             </ConstraintBasicCompulsoryTime>
-        <ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>4</Students>
-	<Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>1</Students>
-	<Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>2</Students>
-	<Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>3</Students>
-	<Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>5-A</Students>
-	<Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>5-B</Students>
-	<Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>6-A</Students>
-	<Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>6-B</Students>
-	<Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>5-H</Students>
-	<Number_of_Not_Available_Times>6</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>5-I</Students>
-	<Number_of_Not_Available_Times>6</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>6-H</Students>
-	<Number_of_Not_Available_Times>6</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>6-I</Students>
-	<Number_of_Not_Available_Times>6</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
-<ConstraintStudentsSetNotAvailableTimes>
-	<Weight_Percentage>100</Weight_Percentage>
-	<Students>B</Students>
-	<Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Astelehena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteartea</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Asteazkena</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Osteguna</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>11:15-11:45</Hour>
-	</Not_Available_Time>
-	<Not_Available_Time>
-		<Day>Ostirala</Day>
-		<Hour>14:30-15:20</Hour>
-	</Not_Available_Time>
-	<Active>true</Active>
-	<Comments></Comments>
-</ConstraintStudentsSetNotAvailableTimes>
          </Time_Constraints_List>
          <Space_Constraints_List>
             <ConstraintBasicCompulsorySpace>
@@ -600,15 +53,15 @@ class MendiFet:
       self.teacher=None
       self.subject=None
       self.group=None
+      self.subgroup=None
       self.totalduration=None
       self.room=None
       self.year=None
       self.building=None
       
-            
       self.rooms={}
-      self.names = {"guard": "Zaintza","option":"h","meeting":"Bilera","help":"laguntza","indep":"independiente","con_type":"Tipo","conexion":"Loturak",
-                      "teacher_name":"Irakaslea","subject":"Ikasgaia","group":"Taldea","total_duration":"Orduak","room":"Aula","year":"Maila","building":"Eraikina"}
+      self.names = {"guard": "Zaintza","option":"h","meeting":"bilera","help":"laguntza","indep":"independiente","con_type":"Mota","conexion":"Konexion",
+                      "teacher_name":"Irakaslea","subject":"Ikasgaia","group":"Taldea","total_duration":"Orduak","room":"Gela","year":"Maila","building":"Eraikina","Subgroup":"Subgroup"}
    
    def set_field_name(self,name,cname):
         self.names[name] =  cname
@@ -1270,7 +723,7 @@ class MendiFet:
       reparsed = xml.dom.minidom.parseString(rough_string)
       return reparsed.toprettyxml(indent="\t")
 
-   def write(self,file='mendifetoutput.fet'):
+   def write(self,file='mendifetoutputJ19.fet'):
       f=codecs.open(file,'w','utf-8')
       #f.write(ET.tostring(self.fetxml))
       f.write(self.prettify(self.fetxml))
@@ -1662,7 +1115,10 @@ class MendiFet:
       #Saiatu dictionary erabiliz egiten
       s=[]
       for r in activities:
-         v = [r[0],r[1],r[4],r[5],[r[2]+"-"+r[3]]]
+         t=[]
+         for i in r[3]:
+             t.append(r[2]+"-"+i)
+         v = [r[0],r[1],r[4],r[5],t]
          s.append(v)
       return s
 
@@ -1727,46 +1183,15 @@ class MendiFet:
             s.append(v)
       return s
 
-
-   def generate_talde_txikiak(self,activities):
+     
+   def generate_hautazkoak(self,activities):
       """
-      activities is a list with the following format:
+      Reads a csv file with the following format:
       teacher,subject,year,groups,hours,room,conexion
       returns a list where each element is a connection of subject 
       that should be a the same time, and in each connection wich are
       also list, each element has the format [[teacher.subject,hours,room,groups],[..]]
-      [[con1,[[teacher.subject,hours,room,[groups]],[..]],[con2,[[teacher.subject,hours,room,[groups]],[..]]],[...]]
-      The groups generated follow this rule:
-      If is a simple group (only one letter), the group name is year_letter_G
-      If is a mixed group (two letters), groups are [[year-firstletter-P,year-secondletter-P]]
-      """
-      #Saiatu dictionary erabiliz egiten
-      s=[]
-      for r in activities:
-         v = [r[-1],r[0:-1]]
-         if len(r[3])>1:
-            v = [r[-1],[r[0],r[1],r[4],r[5],[r[2]+"-"+r[3][0]+"-P",r[2]+"-"+r[3][1]+"-P"]]]
-         else:
-            v = [r[-1],[r[0],r[1],r[4],r[5],[r[2]+"-"+r[3]+"-G"]]]
-         for i in range(len(s)):
-            if s[i][0] == v[0]:
-               s[i].insert(len(s[i]),v[1:][0])
-               break
-            else:
-               if i==len(s)-1:
-                  s.append(v)
-         if len(s)==0:
-            s.append(v)
-      return s
-      
-   def generate_hautazkoak(self,activities):
-      """
-      Reads a csv file with the following format:
-      department,teacher,subject,year,groups,hours,room,conexion
-      returns a list where each element is a connection of subject 
-      that should be a the same time, and in each connection wich are
-      also list, each element has the format [[teacher.subject,hours,room,groups],[..]]
-      [[con1,[[teacher.subject,hours,room,[groups]],[..]],[con2,[[teacher.subject,hours,room,[groups]],[..]]],[...]]
+      [[con1,[[teacher.subject,hours,room,groups],[..]],[con2,[[teacher.subject,hours,room,groups],[..]]],[...]]
       The groups generated follow this rule:
       Groups are [[year-1letter-subject,year-2letter-subject,year-3letter-subject,...]]
       """
@@ -1775,9 +1200,7 @@ class MendiFet:
       for r in activities:
          v = [r[-1],r[0:-1]]
          Taldeak=[]
-         for j in range(len(r[3])):
-            Taldeak.append(r[2]+"-"+r[3][j]+"-"+r[1])
-         v = [r[-1],[r[0],r[1],r[4],r[5],Taldeak]]
+         v = [r[-1],[r[0],r[1],r[4],r[5],r[3]]]
          for i in range(len(s)):
             if s[i][0] == v[0]:
                s[i].insert(len(s[i]),v[1:][0])
@@ -1821,37 +1244,7 @@ class MendiFet:
       except:
          return 1
 
-
-   def generate_groups_from_activities(self):
-      """
-      Returns the groups defined in activities from the suplied fet file
-      """
-      #Years:1,2,3,4,5,6 len=1
-      #Groups:1-A,1-B,1-C,  3-Dib!! 3<=len<6
-      #Subgroups: 1-A-CCSS,1-A-HA,1-A-LS  6<=len
-      #FIXME 4-Div!!included as subgroup of 4-D
-      groups = list(set([b.text for b in self.fetxml.findall(".//Activity/Students")]))
-      groups.sort(key = len)
-      d={}
-      for g in groups:
-         if len(g)==1 and not g in d:
-            d[g]={}
-         if len(g)>1 and len(g)<=4:
-            if g[0] in d and not g in d[g[0]]:
-               d[g[0]][g]=[]
-            else:
-               d[g[0]]={}
-               d[g[0]][g]=[]
-         if len(g)>4:
-            if not g[0] in d:
-               d[g[0]]={}
-            if not g[0:3] in d[g[0]]:
-               d[g[0]][g[0:3]]=[]
-            if not g in g[0:3]:
-               d[g[0]][g[0:3]].append(g)
-      return d
-
-   def create_groups_XML(self,groups):
+   def generate_groups_XML(self,groups):
       """
       Creates the Students section of the fet xml file
       from an fet xml file with activities, by extracting
@@ -1882,7 +1275,6 @@ class MendiFet:
          
       return Students
       
-   
    def generate_tags_from_activities(self):
       """
       Returns the tags defined in activities from the suplied fet file
@@ -1892,43 +1284,33 @@ class MendiFet:
          Tag = ET.SubElement(TagList,"Activity_Tag")
          TagName = ET.SubElement(Tag,"Name")
          TagName.text = tag
-      
-     
-   def generate_teachers_from_activities(self):
+        
+   def generate_teachers_XML(self,teachers):
       """
       Returns the teachers defined in activities from the suplied fet file
       """
       TeacherList=self.fetxml.find('./Teachers_List')
-      for teacher in  list(set([b.text for b in self.fetxml.findall('.//Activity/Teacher')])):
+      for teacher in teachers:
          Teacher=ET.SubElement(TeacherList,"Teacher")
          TeacherName=ET.SubElement(Teacher,"Name")
          TeacherName.text=teacher
 
-   def generate_subjects_from_activities(self):
+   def generate_subjects_XML(self,subjects):
       """
       Returns the teachers defined in activities from the suplied fet file
       """
       SubjectsList=self.fetxml.find('./Subjects_List')
-      for subject in  list(set([b.text for b in self.fetxml.findall('.//Activity/Subject')])):
+      for subject in  subjects:
          Subjects=ET.SubElement(SubjectsList,"Subject")
          SubjectsName=ET.SubElement(Subjects,"Name")
          SubjectsName.text=subject
 
-
-   def generate_rooms_from_activities(self):
+   def generate_rooms_XML(self,rooms):
       """
       Returns the teachers defined in activities from the suplied fet file
       """
       RoomsList=self.fetxml.find('./Rooms_List')
-      for room in list(set([b.text for b in self.fetxml.findall('.//ConstraintActivityPreferredRoom/Room')])):#Eraikinak  -list(set([a.text for a in self.xmlfile.findall('./Room/Name')]))
-         if room =='':
-             continue
-         Room=ET.SubElement(RoomsList,"Room")
-         RoomName=ET.SubElement(Room,"Name")
-         RoomName.text=room
-         RoomBuilding=ET.SubElement(Room,"Building")
-         RoomBuilding.text=room[0]#self.rooms[room]
-      for room in list(set([b.text for b in self.fetxml.findall('.//ConstraintActivityPreferredRooms/Preferred_Room')])):
+      for room in rooms:#Eraikinak  -list(set([a.text for a in self.xmlfile.findall('./Room/Name')]))
          if room =='':
              continue
          Room=ET.SubElement(RoomsList,"Room")
@@ -1961,8 +1343,7 @@ class MendiFet:
             for i in range(int(zaintza[self.totalduration])):
                 print(zaintza)
 
-                ActivitiesElement.append(self.generate_activity([zaintza[7],zaintza[2],1,"","",zaintza[9]], Id, Id, 1,tags=["alumnado","guardia"]))
-                #generate activity: [Teacher,Subject,Total_Duration,Room,[Group(s)]] 
+                ActivitiesElement.append(self.generate_activity([zaintza[6],zaintza[2],1,"","",zaintza[9]], Id, Id, 1,tags=["alumnado","guardia"]))
                 
                 RoomConstraintElement = ET.Element('ConstraintActivityPreferredRooms')
                 WPerElement = ET.SubElement(RoomConstraintElement,'Weight_Percentage')
@@ -2006,12 +1387,7 @@ class MendiFet:
       for group in groups:
          Id=self.max_activity_id()
          self.generate_multiple_teachers(group[1],Id,tags=["reunión"])
-   
-   def generate_all_little_groups(self,groups):
-      for group in groups:
-         Id=self.max_activity_id()
-         activityroot=self.generate_simultaneous_activities(group[1:],Id,tags=["alumnado","clase"])
-   #FIXME Both functions are equal, should be merged
+
    def generate_all_option_groups(self,groups):
       for group in groups:
          Id=self.max_activity_id()
@@ -2019,39 +1395,48 @@ class MendiFet:
 
    def generate_all_independent_activities(self,groups):
       for group in groups:
+         if group[4] == '':
+             continue
          Id=self.max_activity_id()
+         group = group[0],group[1],group[4],group[5],group[3]
          activityroot=self.generate_independent_activities(group,Id,tags=["alumnado","clase"])
+         #activityroot=self.generate_independent_activities(([group[0],group[1],group[4],group[5],group[3]),Id,tags=["alumnado","clase"]])
+         
       
-   def read_csv_data(self,csvfile,separator=','):
+   def read_csv_data(self,csvfile,separator=';'):
       s=[line.rstrip().split(separator) for line in open(csvfile,'r')]
       
-      
-      self.contype=s[0].index(self.names['con_type'])
-      self.con=s[0].index(self.names['conexion'])
-      self.teacher=s[0].index(self.names['teacher_name'])
-      self.subject=s[0].index(self.names['subject'])
-      self.group=s[0].index(self.names['group'])
-      self.totalduration=s[0].index(self.names['total_duration'])
-      self.room=s[0].index(self.names['room'])
-      self.year=s[0].index(self.names['year'])
-      self.building=s[0].index(self.names['building'])
+      self.contype=s[0].index("Mota")
+      self.con=s[0].index("Konexion")
+      self.teacher=s[0].index("Irakaslea")
+      self.subject=s[0].index("Ikasgaia")
+      self.group=s[0].index("Taldea")
+      self.subgroup=s[0].index("Subgroup")
+      self.totalduration=s[0].index("Orduak")
+      self.room=s[0].index("Gela")
+      self.year=s[0].index("Maila")
+      self.building=s[0].index("Eraikina")
       
       self.raw_data=s[1:]
       
+   def gindepjun(self,g):
+       return list(g)
+      
    def generate_from_raw_data(self):
-      tt=[]
+      
       haut=[]
       indep=[]
       bilera=[]
       lag=[]
       zaintzak = []
       
+      taldeak = {}
+      irakasleak = set()
+      ikasgaiak = set()
+      gelak = set()
+      
       for activity in self.raw_data:
          self.rooms[activity[self.room]]=activity[self.building]
-         #if activity[self.room]:
-            #self.rooms[activity[self.room]]=activity[self.room][0]
-         if activity[self.contype]=="tt":
-            tt.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room],activity[self.con]])
          if activity[self.contype]==self.names["option"]:
             haut.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room],activity[self.con]])
          if activity[self.contype]==self.names["meeting"]:
@@ -2062,114 +1447,55 @@ class MendiFet:
             indep.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room]])
          if activity[self.contype] == self.names["guard"]:
             zaintzak.append(activity)
+        
+         if activity[self.year] not in taldeak:
+            year = {}
+            taldeak[activity[self.year]]=year
+         if activity[self.subgroup] not in taldeak[activity[self.year]]:
+            sb = []
+            taldeak[activity[self.year]][activity[self.subgroup]]=sb
+         if activity[self.group] not in taldeak[activity[self.year]][activity[self.subgroup]]:
+            taldeak[activity[self.year]][activity[self.subgroup]].append(activity[self.group])
+            
+         irakasleak.add(activity[self.teacher])
+         ikasgaiak.add(activity[self.subject])
+         gelak.add(activity[self.room])
+         
+      
+      self.generate_groups_XML(taldeak)
+      self.generate_teachers_XML(irakasleak)
+      self.generate_subjects_XML(ikasgaiak)
+      self.generate_rooms_XML(gelak)
+      self.printm()
 
             
-      lg=self.generate_all_little_groups(self.generate_talde_txikiak(tt))
+      #lg=self.generate_all_little_groups(self.generate_talde_txikiak(tt))
       haug=self.generate_all_option_groups(self.generate_hautazkoak(haut))
-      ind=self.generate_all_independent_activities(self.generate_independent(indep))
-      bil=self.generate_all_meetings(self.generate_meetings_groups(bilera))
-      lagun=self.generate_all_laguntza(self.generate_laguntza_groups(lag))
-      zain = self.generate_guard_activity(zaintzak)
+      ind=self.generate_all_independent_activities(indep)
+      #bil=self.generate_all_meetings(self.generate_meetings_groups(bilera))
+      #lagun=self.generate_all_laguntza(self.generate_laguntza_groups(lag))
+      #zain = self.generate_guard_activity(zaintzak)
       #print(lg)
       #print(haut)
       #print(bil)
       
-   def bilatu(self):
-      d={}
-      for a in  list(set(root.findall('./Students_List/Year/Group/Subgroup/Name'))) :
-         if a.text[0]<'5':
-            if a.text[0:3] not in d.keys(): d[a.text[0:3]]=[]
-            d[a.text[0:3]].append(a.text[4:])
-      return d
-      
-   #Functions for importing from a fet file:
-   def TeacherssinFile(xmlfile):
-      """
-      Returns the teachers defined in activities from the suplied fet file
-      """
-      tree = ET.parse(xmlfile)
-      root = tree.getroot()
-      print(list(set([b.text for b in root.findall(".//Activity/Teacher")])))#bada ez bada, egin - list(set([a.text for a in self.xmlfile.findall('./Teachers_List')]))
-   
-   def RoomsinFile(xmlfile):
-      """
-      Returns the rooms defined in activities from the suplied fet file
-      """
-      tree = ET.parse(xmlfile)
-      root = tree.getroot()
-      print(list(set([b.text for b in root.findall(".//ConstraintActivityPreferredRoom/Room")])))
 
-   def max_activity_id_from_file(xmlfile):
-      """
-      Returns the max_activity_id that the suplied fet xmlfile has
-      """
-      tree = ET.parse(xmlfile)
-      root = tree.getroot()
-      try:
-         return max([b.text for b in root.findall(".//Activity/Id")])
-      except:
-         return "1"
-     
-   def groups_in_fet_file(xmlfile):
-      """
-      Returns the groups defined in activities from the suplied fet file
-      """
-      #Years:1,2,3,4,5,6 len=1
-      #Groups:1-A,1-B,1-C,  3-Dib!! 3<=len<6
-      #Subgroups: 1-A-CCSS,1-A-HA,1-A-LS  6<=len
-      tree = ET.parse(xmlfile)
-      root = tree.getroot()
-      all = list(set([b.text for b in root.findall(".//Activity/Students")]))
-      all.sort(key = len)
-      d={}
-      for g in all:
-         if len(g)==1 and not g in d:
-            d[g]={}
-         if len(g)>1 and len(g)<4:
-            if g[0] in d and not g in d[g[0]]:
-               d[g[0]][g]=[]
-            else:
-               d[g[0]]={}
-               d[g[0]][g]=[]
-         if len(g)>=4:
-            if not g[0] in d:
-               d[g[0]]={}
-            if not g[0:3] in d[g[0]]:
-               d[g[0]][g[0:3]]=[]
-            if not g in g[0:3]:
-               d[g[0]][g[0:3]].append(g)
-      return d
-
-   #['Mintegia', 'Izena', 'Ikasgaia', 'Maila', 'Taldea', 'Orduak', 'Gela', 'Konexion', 'Eraikina', 'Mota']
-
-   #<ConstraintStudentsSetNotAvailableTimes>
-        #<Weight_Percentage>100</Weight_Percentage>
-        #<Students>5-I</Students>
-        #<Number_of_Not_Available_Times>6</Number_of_Not_Available_Times>
-        #<Not_Available_Time>
-                #<Day>Astelehena</Day>
-                #<Hour>11:15-11:45</Hour>
-        #</Not_Available_Time>
-        #<Not_Available_Time>
-                #<Day>Asteartea</Day>
-                #<Hour>11:15-11:45</Hour>
-        #</Not_Available_Time>
-        #<Not_Available_Time>
-                #<Day>Asteazkena</Day>
-                #<Hour>11:15-11:45</Hour>
-        #</Not_Available_Time>
-        #<Not_Available_Time>
-                #<Day>Osteguna</Day>
-                #<Hour>11:15-11:45</Hour>
-        #</Not_Available_Time>
-        #<Not_Available_Time>
-                #<Day>Ostirala</Day>
-                #<Hour>11:15-11:45</Hour>
-        #</Not_Available_Time>
-        #<Not_Available_Time>
-                #<Day>Ostirala</Day>
-                #<Hour>14:30-15:20</Hour>
-        #</Not_Available_Time>
-        #<Active>true</Active>
-        #<Comments></Comments>
-#</ConstraintStudentsSetNotAvailableTimes>
+if __name__ == "__main__":
+    
+    a=MendiFet()
+    #a.printm()
+    a.read_csv_data('/home/asier/Hezkuntza/SGCC-Erregistroak-18-19/PR01 Matriculacion y planificacion docente y servicios complementarios/PR0102 Planificacion/Junio/horario.csv')
+    a.set_hours(['08:30-9:25','09:25-10:20', '10:20-10:40','10:40-11:35', '11:35-12:30','12:30-12:50', '12:50-13:40', '13:40-14:30'])
+    a.set_days([ '11','12','13', '14','17', '18'])
+    a.set_name('Mendillorri BHI')
+    print("Generate from raw data")
+    a.generate_from_raw_data()
+    #a.no_class_hours_mendillorri()
+    print("Generate buildings")
+    a.generate_buildings_from_rooms()
+    print("Generate Tags")
+    a.generate_tags_from_activities()
+    print("Generate XML")
+    #a.printm()
+    print("Write")
+    a.write()

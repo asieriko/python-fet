@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Asignements{% endblock %}
+{% block content %}
+        <h1>Update Assignements <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Upload File</button></h1> 
+        
+        <hr />
+        <form action=" {% url 'asig' %}" method="post">
+    			{% csrf_token %}
+    			{{ formAssignement.as_p }}
+    		<input type="submit" value="Submit" class="btn btn-primary">
+		</form>
+		<input type="checkbox" onclick="toggle(this);" />Check all?<br />
+		<script>
+		function toggle(source) {
+		    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+		    for (var i = 0; i < checkboxes.length; i++) {
+		        if (checkboxes[i] != source)
+		            checkboxes[i].checked = source.checked;
+		    }
+		}
+		</script>
+		
+		
+		
+		
+		
+		<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <h1>Add File</h1>
+	          <form  method='POST' action='{% url "asig" %}' enctype='multipart/form-data'>
+			{% csrf_token %}
+			{{ formFile.as_p }}
+			  <button type="submit" class="btn btn-primary">Send File</button>
+			</form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+		
+
+{% endblock %}

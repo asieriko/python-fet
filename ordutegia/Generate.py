@@ -2,7 +2,8 @@ import MendiFet as MF
 
 a=MF.MendiFet()
 #a.printm()
-a.read_csv_data('/home/asier/Hezkuntza/python-hezkuntza/python-fet/ordutegia/data/1718ek.csv')
+print("If errors, chek Eraikina column and order of fields in bilera, zaintza and Taldea only the letters,maila only the number 1-6")
+a.read_csv_data('/home/asier/Hezkuntza/python-hezkuntza/python-fet/18-19-data/19-20.csv')
 a.set_hours(['08:30-9:25','09:25-10:20', '10:20-11:15','11:15-11:45', '11:45-12:40','12:40-13:35', '13:35-14:30', '14:30-15:20' ])
 a.set_days(['Astelehena', 'Asteartea', 'Asteazkena', 'Osteguna', 'Ostirala'])
 a.set_name('Mendillorri BHI')
