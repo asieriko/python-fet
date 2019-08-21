@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Threads{% endblock %}
+{% block content %}
+{% load humanize %}
+        <h1>Thread List</h1>
+        <table id="id_list_table" class="table">
+            <tr>
+                <th>Number</th>
+                <th>Computer</th>
+                <th>Thread</th>
+                <th>Active</th>
+                <th>Last ping</th>
+            </tr>
+             {% for thread in threads %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ thread.computer.name }}</td>
+                    <td>{{ thread.name }}</a></td>
+                    <td>{{ thread.active|yesno:"Si,No,¿?" }}</a></td>
+                    <td> {{ thread.lastping|naturaltime }} ({{ thread.lastping|date:"d M" }} - {{ thread.lastping|time:"H:i" }}) </td>>
+                </tr>
+            {% endfor %}
+        </table>
+{% endblock %}

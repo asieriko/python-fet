@@ -4,13 +4,14 @@ import requests
 import re
 import random  
 import datetime
+import sys
     
     
 HOST = "https://zerbimendi.educacion.navarra.es/fet"
-HOST = "http://localhost:8000/fet"
-HOST = "http://asieriko.pythonanywhere.com/fet"
+HOST = "http://127.0.0.1:8000/fet"
+#HOST = "http://asieriko.pythonanywhere.com/fet"
 
-CHECK_TIME = 30
+CHECK_TIME = 300
     
 def getServerInfo(computer, thread):
     data={}
@@ -54,23 +55,28 @@ def tarfiles(fet,teacher):
     process = subprocess.Popen(cmd,stdout=subprocess.PIPE,shell=False)    
     
 def launchfet(inputfile, outputdir,computer,thread,file_id="0"):
+    fetstart = time.time()
     cmd = ["./fet-cl","--inputfile="+inputfile,"--outputdir="+outputdir]
     process = subprocess.Popen(cmd,stdout=subprocess.PIPE,shell=False)
     print("------------------------------------------------------------------------------")
     print("process:", " ".join(cmd))
     while process.poll() == None:
-        SI = getServerInfo(computer,thread)
-        print(SI)
-        if SI["status"] == "Stop":
-            print("Server send stop signal")
-            process.terminate()
-            return {"status":"stoped"}
-        if (SI["status"] == "active") and (SI["file_id"] != file_id):
-            file_id = SI["file_id"]
-            print("Server send newfile to generate")
-            process.terminate()
-            return {"status":"newfile","file":SI["file_id"]}        #FIXME hobetu behar, ziurtatu id, filename...
-        time.sleep(CHECK_TIME)
+        try:
+            SI = getServerInfo(computer,thread)
+            print(SI)
+            if SI["status"] == "Stop":
+                print("Server send stop signal")
+                process.terminate()
+                return {"status":"stoped"}
+            if (SI["status"] == "active") and (SI["file_id"] != file_id):
+                file_id = SI["file_id"]
+                print("Server send newfile to generate")
+                process.terminate()
+                return {"status":"newfile","file":SI["file_id"]}        #FIXME hobetu behar, ziurtatu id, filename...
+            time.sleep(CHECK_TIME)
+        except Exception:
+            print("An error ocurred  while getServerInfo()")
+            time.sleep(CHECK_TIME)
     tunit = 0
     tmag = 'seconds'
     success = False
@@ -85,7 +91,9 @@ def launchfet(inputfile, outputdir,computer,thread,file_id="0"):
             print(strline)
     print("Process return code",process.returncode)#0 if success, and None if terminate
     if success:
-        return {"status":"success","timeu":tunit,"timem":tmag}
+        fetend = time.time()
+        fetend - fetstart
+        return {"status":"success","timem":int(fetend - fetstart),"timeu":"seconds"}
     else:
         print("Simulation did not found a solution")
         return {"status":"ended"}
@@ -97,33 +105,39 @@ def main(computer,thread):
     outputdir = "."
     file_id=0
     while True:
-        r = launchfet(fetfile,outputdir,computer,thread,file_id)
-        if r["status"] == "newfile":
-            print("Received new file from server, starting again")
-            fetfile = downloadfile(r["file"])
-            file_id=r["file"]
-        if r["status"] == "success":
-            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            print("Received success: timetable found")
-            print("Sucessful simulation in ",r["timem"],r["timeu"])
-            print("Fetfile: ",fetfile)
-            prefix = outputdir + "/timetables/" + fetfile[:-4] + "/" + fetfile[:-4]
-            gfetfile = prefix + "_data_and_timetable.fet"
-            teachersfile = prefix + "_teachers.xml"
-            print(gfetfile)
-            print(teachersfile)
-            tarfiles(gfetfile,teachersfile)
-            sendFilestoServer(computer,thread,gfetfile,teachersfile,r["timem"])
-            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        if r["status"] == "stoped":
-            print("Received stoped")
-            SI = getServerInfo(computer,thread)
-            while SI["status"] == "Stop":
-                print("Waiting until new file is send")
+        try:
+            r = launchfet(fetfile,outputdir,computer,thread,file_id)
+            if r["status"] == "newfile":
+                print("Received new file from server, starting again")
+                fetfile = downloadfile(r["file"])
+                file_id=r["file"]
+            if r["status"] == "success":
+                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                print("Received success: timetable found")
+                print("Sucessful simulation in ",r["timem"],r["timeu"])
+                print("Fetfile: ",fetfile)
+                prefix = outputdir + "/timetables/" + fetfile[:-4] + "/" + fetfile[:-4]
+                gfetfile = prefix + "_data_and_timetable.fet"
+                teachersfile = prefix + "_teachers.xml"
+                print(gfetfile)
+                print(teachersfile)
+                tarfiles(gfetfile,teachersfile)
+                sendFilestoServer(computer,thread,gfetfile,teachersfile,r["timem"])
+                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            if r["status"] == "stoped":
+                print("Received stoped")
                 SI = getServerInfo(computer,thread)
-            fetfile = SI
-        if r["status"] == "ended":
-            print("Received ended")
+                while SI["status"] == "Stop":
+                    print("Waiting until new file is send")
+                    SI = getServerInfo(computer,thread)
+                fetfile = SI
+            if r["status"] == "ended":
+                print("Received ended")
+        except Exception:
+            print("An error ocurred")
 
 if __name__=="__main__":
-    main("Asier","t1")
+    computer = sys.argv[1]
+    thread = sys.argv[2] 
+    
+    main(computer,thread)

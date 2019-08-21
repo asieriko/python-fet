@@ -5,23 +5,6 @@ import csv
 
 
 def evaluate(inputfile):
-  '''
-  This function recives an teacher.xml file from fet and evaluates each teacher's timetable
-  
-  output
-  tdic: A dictionary with every teacher and the following results: Same of sumtotal for each teacher
-  sumdicNew: A dictionary with how many teachers have full days (NO:how many 0 full, 1 full,...) and days starting at first until 7th
-  sumtotal: A list with the following data (sum for all teachers):
-    totalgapsmorning
-    totalgapsevening
-    totalgapsweek
-    totalgapsweek - weekdays + playtimeguard
-    totalhoursweek
-    totalhoursweek - weekdays
-    totalhoursweek - weekdays + playtimeguard
-    totalfulldays
-    total17days
-  '''
   tree = ET.parse(inputfile)
   root = tree.getroot()
   teachers = root.findall(".//Teacher")

@@ -4,7 +4,7 @@ from .models import File, Assignment
 class AssignementForm(forms.Form):
     
     files = forms.ModelChoiceField(
-        queryset = File.objects.all(),
+        queryset = File.objects.all().reverse(),
     )
     
     assignements = forms.ModelMultipleChoiceField(
