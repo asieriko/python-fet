@@ -15,11 +15,13 @@ class Ui(QtWidgets.QMainWindow):
         self.ui.denakButton.clicked.connect(self.getTeachers)
         self.ui.libreButton.clicked.connect(self.getFreeTeachers)
         self.ui.ateraButton.clicked.connect(self.close)
+        self.ui.EvaluateAllButton.clicked.connect(self.evaluateAll)
         self.ui.openB.clicked.connect(self.openxml)
         self.teacherCB.activated[str].connect(self.fillTimetable)
         self.ui.listWidget.currentItemChanged.connect(self.fillTimetable2)
         self.ui.tableWidget.setHorizontalHeaderLabels(["Astelehena","Asteartea","Asteazkena","Osteguna","Ostirala"]);
-        self.ui.tableWidget.setVerticalHeaderLabels(["08:30\n-\n9:25","09:25\n-\n10:20","10:20\n-\n11:15","11:15\n-\n11:45","11:45\n-\n12:40","12:40\n-\n13:35","13:35\n-\n14:30","14:30\n-\n15:20"]);
+        #self.ui.tableWidget.setVerticalHeaderLabels(["08:30\n-\n9:25","09:25\n-\n10:20","10:20\n-\n11:15","11:15\n-\n11:45","11:45\n-\n12:40","12:40\n-\n13:35","13:35\n-\n14:30","14:30\n-\n15:20"]);
+        self.ui.tableWidget.setVerticalHeaderLabels(["08:15\n-\n08:30","08:30\n-\n9:25","09:25\n-\n10:20","10:20\n-\n11:15","11:15\n-\n11:45","11:45\n-\n12:40","12:40\n-\n13:35","13:35\n-\n14:30","14:30\n-\n15:20"]);
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(1)
         self.ui.tableWidget.verticalHeader().setSectionResizeMode(1)
         self.ui.tableWidget_2.setVerticalHeaderLabels(["Extremos mañana","Extremos mediodia","Huecos","huecos sin rec","horas/sem","horas/sem - rec","horas/sem - rec + guard rec","Dias completos","1ª-7ª"]);
@@ -28,12 +30,18 @@ class Ui(QtWidgets.QMainWindow):
         self.ui.denakRB.toggled.connect(self.tog)
         self.ui.zaintzakRB.toggled.connect(self.tog)
         self.ui.deusRB.toggled.connect(self.tog)
+        self.ui.eraikinakRB.toggled.connect(self.tog)
+        self.ui.bzaintzakCB.stateChanged.connect(self.bakarrik_Zaintzak)
+        self.ui.aintziraCB.stateChanged.connect(self.aintzira)
+        self.ui.urakCB.stateChanged.connect(self.urak)
         self.inputxmlf = ""
         #self.center()
         self.show()
         self.colors = [QtGui.QColor("red"),QtGui.QColor("green"),QtGui.QColor("blue"),QtGui.QColor("magenta"), QtGui.QColor("yellow"),
         QtGui.QColor("cyan"),QtGui.QColor("gray"),QtGui.QColor("darkRed"),QtGui.QColor("darkGreen"),
         QtGui.QColor("darkBlue"),QtGui.QColor("darkMagenta"),QtGui.QColor("darkYellow"),QtGui.QColor("darkCyan"),QtGui.QColor("darkGray"),QtGui.QColor("lightGray")]
+        self.allteachers = []
+        self.selectedTeacher = ''
 
     @QtCore.pyqtSlot()
     def openxml(self):
@@ -47,15 +55,63 @@ class Ui(QtWidgets.QMainWindow):
     def tog(self):
         self.fillTimetable(self.ui.listWidget.currentItem().text())
 
+    def urak(self):
+        if self.ui.urakCB.isChecked():
+            self.ui.aintziraCB.setChecked(False)
+        #if not (self.ui.urakCB.isChecked() and self.ui.aintziraCB.isChecked()):
+        self.bakarrik_Zaintzak()
+    
+    def aintzira(self):
+        if self.ui.aintziraCB.isChecked(): 
+            self.ui.urakCB.setChecked(False)
+        self.bakarrik_Zaintzak()
 
+    def bakarrik_Zaintzak(self):
+        et = etree.parse(self.inputxmlf)
+        nlist = [self.selectedTeacher]
+        if self.ui.bzaintzakCB.isChecked():
+            for teacher in self.allteachers:
+                t = et.xpath(".//Teacher[@name='"+ teacher+"']//Subject[@name='Zaintza']")
+                r = list(set(x.getparent().findall(".//Room")[0].attrib.get('name')[0] for x in t))
+                if t != []:
+                    if self.ui.urakCB.isChecked():
+                        if "2" in r:
+                            nlist.append(teacher)
+                    elif self.ui.aintziraCB.isChecked(): 
+                        if "1" in r:
+                            nlist.append(teacher)
+                    else:
+                        nlist.append(teacher)
+            self.tlist = nlist
+
+            self.ui.teacherCB.clear()
+            self.ui.teacherCB.addItems(self.tlist)
+            self.ui.listWidget.clear()
+            self.ui.listWidget.addItems(self.tlist)
+            self.fillTimetable(self.tlist[0])
+        else:
+            self.ui.aintziraCB.setChecked(False)
+            self.ui.urakCB.setChecked(False)
+            self.getTeachers()
+      
     def getFreeTeachers(self):
         et = etree.parse(self.inputxmlf)
         sel = self.ui.tableWidget.selectedRanges()
         hour = self.ui.tableWidget.verticalHeaderItem(sel[0].topRow()).text().replace('\n','')
         day = self.ui.tableWidget.horizontalHeaderItem(sel[0].leftColumn()).text()
-        allteachers = [at.attrib.get('name') for at in et.xpath(".//Teacher")]
+        allteachers = self.allteachers
         bussyteachers = [at.getparent().getparent().getparent().attrib.get('name') for at in et.xpath(".//Teacher/Day[@name='"+day+"']/Hour[@name='"+hour+"']/Subject")]
         freeteachers = sorted(list(set(allteachers)-set(bussyteachers)))
+        
+        flist = [self.ui.teacherCB.currentText()]
+        if self.ui.bzaintzakCB.isChecked():
+            for teacher in freeteachers:
+                t = et.xpath(".//Teacher[@name='"+ teacher +"']//Subject[@name='Zaintza']")
+                if t != []:
+                    flist.append(teacher)
+        else:
+            flist = freeteachers #list(teacher.attrib.get('name') for teacher in allteachers) #Falta el actualmente seleccionado
+        freeteachers = flist
         current = self.ui.teacherCB.currentText()
         self.tlist = []
         if current not in freeteachers:
@@ -76,9 +132,22 @@ class Ui(QtWidgets.QMainWindow):
         hour = self.ui.tableWidget.verticalHeaderItem(sel[0].topRow()).text().replace('\n','')
         day = self.ui.tableWidget.horizontalHeaderItem(sel[0].leftColumn()).text()
         teachers = et.xpath(".//Teacher/Day[@name='"+day+"']/Hour[@name='"+hour+"']/Subject[@name='Zaintza']")
-        self.tlist = [self.ui.teacherCB.currentText()]
+        self.tlist = [self.selectedTeacher]
+        nlist = [self.selectedTeacher]
         for t in teachers:
-            self.tlist.append(t.getparent().getparent().getparent().attrib.get('name')) #if the selected teacher has Zaintza it gets duplicated
+            teacher = t.getparent().getparent().getparent().attrib.get('name')
+            t = et.xpath(".//Teacher[@name='"+ teacher+"']//Subject[@name='Zaintza']")
+            r = list(set(x.getparent().findall(".//Room")[0].attrib.get('name')[0] for x in t))
+            if t != []:
+                if self.ui.urakCB.isChecked():
+                    if "2" in r:
+                        nlist.append(teacher)
+                elif self.ui.aintziraCB.isChecked(): 
+                    if "1" in r:
+                        nlist.append(teacher)
+                else:
+                    nlist.append(teacher)
+        self.tlist = nlist
         self.ui.teacherCB.clear()
         self.ui.teacherCB.addItems(self.tlist)
         self.ui.listWidget.clear()
@@ -86,10 +155,27 @@ class Ui(QtWidgets.QMainWindow):
 
 
     def getTeachers(self):
+      et = etree.parse(self.inputxmlf)
       self.tree = ET.parse(self.inputxmlf)
       self.root = self.tree.getroot()
       teachers = self.root.findall(".//Teacher")
-      self.tlist = list(teacher.attrib.get('name') for teacher in teachers)
+      self.tlist = [self.selectedTeacher] #FIXME: Comprobar
+      if self.ui.bzaintzakCB.isChecked():
+        for teacher in teachers:
+            t = et.xpath(".//Teacher[@name='"+ teacher.attrib.get('name') +"']//Subject[@name='Zaintza']")
+            r = list(set(x.getparent().findall(".//Room")[0].attrib.get('name')[0] for x in t))
+            if t != []:
+                if self.ui.urakCB.isChecked():
+                        if "2" in r:
+                            nlist.append(teacher.attrib.get('name'))
+                elif self.ui.aintziraCB.isChecked(): 
+                        if "1" in r:
+                            nlist.append(teacher.attrib.get('name'))
+                else:
+                        nlist.append(teacher.attrib.get('name'))
+        self.tlist = nlist
+      else:
+        self.allteachers = self.tlist = list(teacher.attrib.get('name') for teacher in teachers)
       self.ui.teacherCB.clear()
       self.ui.teacherCB.addItems(self.tlist)
       self.ui.listWidget.clear()
@@ -97,7 +183,8 @@ class Ui(QtWidgets.QMainWindow):
       self.fillTimetable(self.root.findall(".//Teacher")[0].attrib.get('name')) #fixme: get from the list
 
     def fillTimetable2(self,curr,prev):
-        self.ui.teacherCB.setCurrentIndex(self.tlist.index(curr.text()))
+        self.selectedTeacher = curr.text()
+        self.ui.teacherCB.setCurrentIndex(self.tlist.index(self.selectedTeacher))
         self.fillTimetable(str(curr.text()))
 
     def fillTimetable(self,text):
@@ -134,7 +221,7 @@ class Ui(QtWidgets.QMainWindow):
                     if not self.ui.deusRB.isChecked():
                         if subject == "Zaintza":
                             self.ui.tableWidget.item(int(hourt), int(dayt)).setBackground(QtGui.QColor(QtGui.QColor(100,100,150)));
-                            if room[0] == "2" :
+                            if room != '' and  room[0] == "1" :
                                 self.ui.tableWidget.item(int(hourt), int(dayt)).setTextAlignment(2);
                                 if self.ui.denakRB.isChecked():
                                     self.ui.tableWidget.item(int(hourt), int(dayt)).setForeground(QtGui.QColor(QtGui.QColor("white")))
@@ -144,6 +231,18 @@ class Ui(QtWidgets.QMainWindow):
                                 self.ui.tableWidget.item(int(hourt), int(dayt)).setTextAlignment(2);
                                 self.ui.tableWidget.item(int(hourt), int(dayt)).setForeground(QtGui.QColor(QtGui.QColor("white")))
                     self.ui.tableWidget.resizeRowToContents(int(hourt))
+                    if self.ui.eraikinakRB.isChecked():
+                            if room != '' and room[0] == "1":
+                                self.ui.tableWidget.item(int(hourt), int(dayt)).setBackground(QtGui.QColor(QtGui.QColor("Red")));
+                                if subject == "Zaintza":
+                                    self.ui.tableWidget.item(int(hourt), int(dayt)).setForeground(QtGui.QColor(QtGui.QColor("white")))
+                                    self.ui.tableWidget.item(int(hourt), int(dayt)).setBackground(QtGui.QColor(QtGui.QColor("DarkRed")));
+                            elif room != '' and room[0] == "2":
+                                self.ui.tableWidget.item(int(hourt), int(dayt)).setBackground(QtGui.QColor(QtGui.QColor("Green")))
+                                if subject == "Zaintza":
+                                    self.ui.tableWidget.item(int(hourt), int(dayt)).setForeground(QtGui.QColor(QtGui.QColor("white")))
+                                    self.ui.tableWidget.item(int(hourt), int(dayt)).setBackground(QtGui.QColor(QtGui.QColor("DarkGreen")));
+                                
                 hourt += 1
             dayt += 1
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(1)

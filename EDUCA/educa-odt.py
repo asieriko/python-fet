@@ -9,8 +9,16 @@ from odf.style import Style, TextProperties, ParagraphProperties,TableCellProper
 from odf import table, text
 
 def get_years(root):
-   years = sorted(list(set(b.get('CODGRUPO') for b in root.findall('.//SOLUCF'))))
-   return years
+   years = list(set(b.get('CODGRUPO') for b in root.findall('.//SOLUCF')))
+   years = [year for year in years if year != '' and year[0].isdigit()]
+   yearsg = {year:[year] for year in years if len(year) == 3}
+   yearssg = [year for year in years if len(year) > 3]
+   for year in yearssg:
+       c,gs,_ = year.split("-")
+       for g in gs:
+           yearsg[c+"_"+g].append(year)
+   print(yearsg)
+   return yearsg
 
 def get_teachers(root):
    years = sorted(list(set(b.get('PROF') for b in root.findall('.//SOLUCF'))))
@@ -36,7 +44,8 @@ def room_name(root,cod):
   #r.findall('.//AULAF[@ABREV="1A5"]')[0].get('NOMBRE')
   return name  
   
-t, r = open()
+educafile = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/20-21-data/educa 20-21.xml"  
+t, r = open(educafile)
 y = get_years(r)
 
 
@@ -60,7 +69,7 @@ textdoc.text.addElement(p)
 
 
 
-for year in y:
+for year in sorted(y):
   #p = text.P(stylename=withbreak,text=year)
   h=text.H(outlinelevel=1, stylename=h1style, text=year)
   textdoc.text.addElement(h)
@@ -78,10 +87,11 @@ for year in y:
     tc.addElement(text.P(text=eguna))
     tr.addElement(tc)
   rownum = 0
-  for hour in range(1,8):
-    if hour == 4:
+  for hour in range(2,10):
+    if hour == 5:
       tr = table.TableRow()
       t.addElement(tr)
+      continue
     tr = table.TableRow()
     t.addElement(tr)
     tc = table.TableCell(valuetype="string", stylename="Table")
@@ -90,9 +100,12 @@ for year in y:
     for day in range(1,6):
       tc = table.TableCell(valuetype="string", stylename="Table")
       tr.addElement(tc)
-      l = r.findall('.//SOLUCF[@CODGRUPO="'+year+'"][@DIA="'+str(day)+'"][@HORA="'+str(hour)+'"]')
-      for a in l: 
-         tc.addElement(text.P(text=a.get("ASIG") + ' (' + teacher_name(r,a.get("PROF")) +' - '+ room_name(r,a.get("AULA"))+')'))
+      for sg in y[year]:
+        l = r.findall('.//SOLUCF[@CODGRUPO="'+sg+'"][@DIA="'+str(day)+'"][@HORA="'+str(hour)+'"]')
+        for a in l: 
+            if a.get("ASIG")[0].isdigit() == False:
+                continue
+            tc.addElement(text.P(text=a.get("ASIG") + ' (' + teacher_name(r,a.get("PROF")) +' - '+ room_name(r,a.get("AULA"))+')'))
     rownum += 1
   textdoc.text.addElement(datatable)
   
@@ -100,7 +113,7 @@ for year in y:
 textdoc.save("ordutegia_ikasle.odt")
 print "ikasle"
 
-
+dfasd
 textdoc = OpenDocumentText()
 # Create a style for the paragraph with page-break
 withbreak = Style(name="WithBreak", parentstylename="Standard", family="paragraph")
@@ -136,8 +149,8 @@ for teacher in teachers:
     tr.addElement(tc)
     tc.addElement(text.P(text=eguna))
   rownum = 0
-  for hour in range(1,8):
-    if hour == 4:
+  for hour in range(1,9):
+    if hour == 5:
       tr = table.TableRow()
       t.addElement(tr)
     tr = table.TableRow()
@@ -194,8 +207,8 @@ for room in rooms:
     tr.addElement(tc)
     tc.addElement(text.P(text=eguna))
   rownum = 0
-  for hour in range(1,8):
-    if hour == 4:
+  for hour in range(1,9):
+    if hour == 5:
       tr = table.TableRow()
       t.addElement(tr)
     tr = table.TableRow()

@@ -608,7 +608,7 @@ class MendiFet:
             
       self.rooms={}
       self.names = {"guard": "Zaintza","option":"h","meeting":"Bilera","help":"laguntza","indep":"independiente","con_type":"Tipo","conexion":"Loturak",
-                      "teacher_name":"Irakaslea","subject":"Ikasgaia","group":"Taldea","total_duration":"Orduak","room":"Aula","year":"Maila","building":"Eraikina"}
+                      "teacher_name":"Irakaslea","subject":"Ikasgaia","group":"Taldea","total_duration":"Orduak","room":"Aula","year":"Maila","building":"Eraikina","con3":"ConexiónA3"}
    
    def set_field_name(self,name,cname):
         self.names[name] =  cname
@@ -1961,7 +1961,7 @@ class MendiFet:
             for i in range(int(zaintza[self.totalduration])):
                 print(zaintza)
 
-                ActivitiesElement.append(self.generate_activity([zaintza[7],zaintza[2],1,"","",zaintza[9]], Id, Id, 1,tags=["alumnado","guardia"]))
+                ActivitiesElement.append(self.generate_activity([zaintza[6],zaintza[2],1,"","",zaintza[9]], Id, Id, 1,tags=["alumnado","guardia"]))
                 #generate activity: [Teacher,Subject,Total_Duration,Room,[Group(s)]] 
                 
                 RoomConstraintElement = ET.Element('ConstraintActivityPreferredRooms')
@@ -2017,10 +2017,12 @@ class MendiFet:
          Id=self.max_activity_id()
          activityroot=self.generate_simultaneous_activities(group[1:],Id,tags=["alumnado","clase"])
 
-   def generate_all_independent_activities(self,groups):
+   def generate_all_independent_activities(self,groups,tags=None):
+      if tags == None:
+          tags = ["alumnado","clase"]
       for group in groups:
          Id=self.max_activity_id()
-         activityroot=self.generate_independent_activities(group,Id,tags=["alumnado","clase"])
+         activityroot=self.generate_independent_activities(group,Id,tags)
       
    def read_csv_data(self,csvfile,separator=','):
       s=[line.rstrip().split(separator) for line in open(csvfile,'r')]
@@ -2042,6 +2044,7 @@ class MendiFet:
       tt=[]
       haut=[]
       indep=[]
+      con3 = []
       bilera=[]
       lag=[]
       zaintzak = []
@@ -2062,11 +2065,14 @@ class MendiFet:
             indep.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room]])
          if activity[self.contype] == self.names["guard"]:
             zaintzak.append(activity)
+         if activity[self.contype]==self.names["con3"]:
+            con3.append([activity[self.teacher],activity[self.subject],activity[self.year],activity[self.group],activity[self.totalduration],activity[self.room]])
 
             
       lg=self.generate_all_little_groups(self.generate_talde_txikiak(tt))
       haug=self.generate_all_option_groups(self.generate_hautazkoak(haut))
       ind=self.generate_all_independent_activities(self.generate_independent(indep))
+      c3=self.generate_all_independent_activities(self.generate_independent(con3),["alumnado","clase","C3"])
       bil=self.generate_all_meetings(self.generate_meetings_groups(bilera))
       lagun=self.generate_all_laguntza(self.generate_laguntza_groups(lag))
       zain = self.generate_guard_activity(zaintzak)

@@ -1,9 +1,13 @@
 #!/usr/bin/python
-import sys, getopt, os
+import sys, getopt
 import csv
+
+from lxml import etree as ET
+
+
+
 import time
 import xml.dom.minidom
-from lxml import etree as ET
 #from xml.etree import ElementTree as ET
 from datetime import datetime
 from itertools import chain
@@ -13,6 +17,33 @@ from odf.text import P, H, List, ListItem
 from odf.table import Table, TableColumn, TableRow, TableCell
 from odf import table, text
 
+filet = "/home/asier/fet-results/timetables/Horario_19-20-Comp-single/Horario_19-20-Comp_teachers.xml"
+fileg = "/home/asier/fet-results/timetables/Horario_19-20-Comp-single/Horario_19-20-Comp_subgroups.xml"
+
+tree = ET.parse(fileg)     
+root = tree.getroot()
+
+tree2 = ET.parse(filet)     
+root2 = tree2.getroot()
+
+orduak = ['08:30-9:25','09:25-10:20','10:20-11:15', '11:15-11:45','11:45-12:40','12:40-13:35', '13:35-14:30','14:30-15:20']
+
+
+h1style = Style(name="Heading 1",  family="paragraph",parentstylename="Heading 1")
+h1style.addElement(GraphicProperties(fill="solid",fillcolor="#e6e6ff"))
+h1style.addElement(TextProperties(attributes={'fontsize':"14pt",'fontweight':"bold",'color':"#000099" }))
+h1style.addElement(ParagraphProperties(breakbefore="page",margintop="0.4cm",marginbottom="0.2cm",backgroundcolor="#e6e6ff",padding="0.05cm",borderleft="none",borderright="none",bordertop="none",borderbottom="2.01pt solid #000099",shadow="none"))
+
+# Create a style for the paragraph with page-break
+withbreak = Style(name="WithBreak", parentstylename="Standard", family="paragraph")
+withbreak.addElement(ParagraphProperties(breakbefore="page"))
+
+TAB_style = Style(name="Table", family="table-cell")
+TAB_style.addElement(TableCellProperties(border="0.05pt solid #000000"))
+
+tableheaders = Style(name="Table Headers", family="paragraph", parentstylename="Standard")
+tableheaders.addElement(ParagraphProperties(numberlines="false", linenumber="0",textalign="center",margintop="0.2cm",marginbottom="0.2cm"))
+tableheaders.addElement(TextProperties(attributes={'fontsize':"12pt",'fontweight':"bold"}))
 
 def createdoc():
     
@@ -37,7 +68,9 @@ def print_odf(Matrix,name,textdoc,odtfile):
     datatable.addElement(t)
     tr = table.TableRow()
     t.addElement(tr)
-    for eguna in ('Saioa','Astelehena','Asteartea','Asteazkena','Osteguna','Ostirala'):
+    egunak = {'eu':['Saioa','Astelehena','Asteartea','Asteazkena','Osteguna','Ostirala'],
+    'es': ["Sesión","Lunes","Martes","Miércoles","Jueves","Viernes"]}
+    for eguna in egunak[lang]:
         tc = TableCell(stylename="Table")
         tr.addElement(tc)
         p = P(stylename=tableheaders,text=eguna)
@@ -68,9 +101,10 @@ def findsg(groups,lang,trans,verbose=False):
     textdoc = createdoc()            
     p = text.P(text=u'Horarios por grupos')
     textdoc.text.addElement(p)
-    
+    ikas = set()
     for group in groups:
         subgroups = root.xpath(".//Subgroup[starts-with(@name,'"+group+"')]")
+        print(".//Subgroup[starts-with(@name,'"+group+"')]")
         w, h = 5, 8 
         Matrix = [[[] for x in range(w)] for y in range(h)] 
         for s in subgroups: 
@@ -90,7 +124,14 @@ def findsg(groups,lang,trans,verbose=False):
                     if sub != []:
                         name = sub[0].attrib['name']
                         if lang == 'es' and name in trans.keys():
-                            name = trans[name]                        
+                            name = trans[name]        
+                        #else:
+                            #with open("/media/asier/Erregeton/python-horarios/corregidos/itzulpena.csv", 'a') as f:
+                                #writer = csv.writer(f)
+                                #writer.writerow([name,''])
+                        #if lang == 'eu' and name not in trans.keys():
+                            #print(name) 
+                            #ikas.add(name)
                     if sub != [] and Matrix[j][i].count(name+' ('+room+')')==0:
                         #print(d.attrib['name'],h.attrib['name'],name)
                         #print(i,j)
@@ -102,8 +143,45 @@ def findsg(groups,lang,trans,verbose=False):
             dbh = True
         else:
             dbh = False
-        printmat(Matrix,verbose)
-        print_odf(Matrix,group,textdoc,"ordutegia_ikasle.odt")
+        #with open("/media/asier/Erregeton/python-horarios/corregidos/itzulpena.csv", 'a') as f:
+            #for name in ikas:
+                    #writer = csv.writer(f)
+                    #writer.writerow([name,''])
+        #printmat(Matrix,verbose)
+        print_odf(Matrix,group,textdoc,"ordutegia_ikasle"+lang+".odt")
+
+def findteachergroups(groups,lang,trans,verbose=False):
+    textdoc = createdoc()            
+    p = text.P(text=u'Profesores por grupos')
+    textdoc.text.addElement(p)
+    ikas = set()
+    for group in groups:
+        subgroups = root.xpath(".//Subgroup[starts-with(@name,'"+group+"')]")
+        print(".//Subgroup[starts-with(@name,'"+group+"')]")
+        for s in subgroups: 
+            ds = s.findall(".//Day")
+            i = 0
+            for d in ds:
+                hs = d.findall(".//Hour")
+                j = 0
+                for h in hs:
+                    sub = h.findall(".//Subject")
+                    teacher = h.findall(".//Teacher")
+                    if teacher != []:
+                        teacher = teacher[0].attrib['name']
+                    else:
+                        teacher = ''
+                    if sub != []:
+                        name = sub[0].attrib['name']
+                        if lang == 'es' and name in trans.keys():
+                            name = trans[name]   
+                        print(teacher,": ",name)
+                        with open("/media/asier/Erregeton/python-horarios/corregidos/profesores.csv", 'a') as f:
+                                writer = csv.writer(f)
+                                writer.writerow([group,teacher,name])
+        #print_odf(Matrix,group,textdoc,"irakasle_ikasle"+lang+".odt")
+
+
 
 
 def findt(lang,trans):
@@ -190,6 +268,7 @@ def printmat(mat,verbose=False):
                 print(mat[j][i],"FALTA!!",end="\t")
             elif verbose:
                 print(mat[j][i],end="\t")
+        print("\n")
         if verbose: print()
 
 def loadtranslations(incsvfile):
@@ -200,42 +279,23 @@ def loadtranslations(incsvfile):
             trans[row[0]] = row[1]
     return trans
 
+def loadtranslationsInverse(incsvfile):
+    trans = {}
+    with open(incsvfile, newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',')
+        for row in spamreader:
+            trans[row[1]] = row[0]
+    return trans
 
-h1style = Style(name="Heading 1",  family="paragraph",parentstylename="Heading 1")
-h1style.addElement(GraphicProperties(fill="solid",fillcolor="#e6e6ff"))
-h1style.addElement(TextProperties(attributes={'fontsize':"14pt",'fontweight':"bold",'color':"#000099" }))
-h1style.addElement(ParagraphProperties(breakbefore="page",margintop="0.4cm",marginbottom="0.2cm",backgroundcolor="#e6e6ff",padding="0.05cm",borderleft="none",borderright="none",bordertop="none",borderbottom="2.01pt solid #000099",shadow="none"))
-
-# Create a style for the paragraph with page-break
-withbreak = Style(name="WithBreak", parentstylename="Standard", family="paragraph")
-withbreak.addElement(ParagraphProperties(breakbefore="page"))
-
-TAB_style = Style(name="Table", family="table-cell")
-TAB_style.addElement(TableCellProperties(border="0.05pt solid #000000"))
-
-tableheaders = Style(name="Table Headers", family="paragraph", parentstylename="Standard")
-tableheaders.addElement(ParagraphProperties(numberlines="false", linenumber="0",textalign="center",margintop="0.2cm",marginbottom="0.2cm"))
-tableheaders.addElement(TextProperties(attributes={'fontsize':"12pt",'fontweight':"bold"}))
-
-
-
-
-groups = ['1-A','1-B','1-C','1-D','1-E','1-H','1-I','1-J','1-K','1-L','2-A','2-B','2-C','2-D','2-P','2-H','2-I','2-J','3-A','3-B','3-C','3-D','3-H','3-I','3-J','3-K','3-L','4-A','4-B','4-C','4-D','4-H','4-I','4-J','4-K','4-L','5-A','5-B','5-H','5-I','5-J','6-A','6-B','6-H','6-I','6-J']
-
+groups = ['1-A','1-B','1-C','1-D','1-E','1-F','1-H','1-I','1-J','2-A','2-B','2-C','2-D''2-E','2-F','2-H','2-I','2-J','2-K','UCE','3-A','3-B','3-C','3-D','3-E','3-H','3-I','3-J','3-K','3-L','4-A','4-B','4-C','4-D','4-H','4-I','4-J','4-K','5-A','5-B','5-H','5-I','6-A','6-B','6-H','6-I']
+groups = ['2-E']
 lang = 'es'
-path = "/home/asier/Hezkuntza/python-hezkuntza/python-fet/16-17-data/"
+trans = loadtranslations("/media/asier/Erregeton/python-horarios/corregidos/itzulpena.csv")
+#findsg(groups,lang,trans)
 
-fileg = os.path.join(path,"subgroups.xml")
-filet = os.path.join(path,"teachers.xml")
-trans = loadtranslations(os.path.join(path,"itzulpena.csv"))
-
-tree = ET.parse(fileg)     
-root = tree.getroot()
-tree2 = ET.parse(filet)     
-root2 = tree2.getroot()
-
-orduak = ['08:30-9:25','09:25-10:20','10:20-11:15', '11:15-11:45','11:45-12:40','12:40-13:35', '13:35-14:30','14:30-15:20']
-
-findsg(groups,lang,trans)
-findt(lang,trans)
-findzaintza()
+#lang = 'eu'
+#trans = loadtranslationsInverse("/media/asier/Erregeton/python-horarios/corregidos/itzulpena.csv")
+#findsg(groups,lang,trans)
+#findt(lang,trans)
+#findzaintza()
+findteachergroups(groups,lang,trans)

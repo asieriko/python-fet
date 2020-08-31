@@ -7,9 +7,8 @@ import datetime
 import sys
     
     
-HOST = "https://zerbimendi.educacion.navarra.es/fet"
-HOST = "http://127.0.0.1:8000/fet"
-#HOST = "http://asieriko.pythonanywhere.com/fet"
+#HOST = "http://127.0.0.1:8000/fet"
+HOST = "http://appsmendillorri.educacion.navarra.es/fet"
 
 CHECK_TIME = 300
     
@@ -100,8 +99,7 @@ def launchfet(inputfile, outputdir,computer,thread,file_id="0"):
     print("End")
     
 def main(computer,thread):
-    #fetfile="mendifetoutput.fet"
-    fetfile="Horario1718-Erl.fet"
+    fetfile="Horario.fet"
     outputdir = "."
     file_id=0
     while True:

@@ -95,7 +95,7 @@ def upload_files(request):
         
         tdic, sumdic, sumtotal = evaluate(result.tfile)
         s = "Resumen\n"
-        for k in sumdic.keys():
+        for k in sorted(sumdic.keys()):
             s += str(k)+" días completos: "+str(sumdic[k])+" docentes\n"
         result.stats = s
         result.save()

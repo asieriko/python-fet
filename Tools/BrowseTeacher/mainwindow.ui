@@ -33,7 +33,7 @@
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
       <property name="rowCount">
-       <number>8</number>
+       <number>9</number>
       </property>
       <property name="columnCount">
        <number>5</number>
@@ -44,6 +44,7 @@
       <attribute name="verticalHeaderStretchLastSection">
        <bool>false</bool>
       </attribute>
+      <row/>
       <row/>
       <row/>
       <row/>
@@ -114,6 +115,35 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="EvaluateAllButton">
+            <property name="text">
+             <string>Datu globalak</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="bzaintzakCB">
+            <property name="text">
+             <string>Bakarrik
+ Zaintzak</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="urakCB">
+            <property name="text">
+             <string>Urak (2)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="aintziraCB">
+            <property name="text">
+             <string>Aintzira (1)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -140,6 +170,13 @@
            <widget class="QRadioButton" name="zaintzakRB">
             <property name="text">
              <string>&amp;Zaintzak</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="eraikinakRB">
+            <property name="text">
+             <string>Eraikinak</string>
             </property>
            </widget>
           </item>
@@ -177,7 +214,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>30</height>
     </rect>
    </property>
   </widget>
